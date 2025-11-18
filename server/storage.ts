@@ -383,7 +383,8 @@ export class DatabaseStorage implements IStorage {
       return { success: false, error: "User not found" };
     }
 
-    if (user.totalPoints < foodCost) {
+    const userPoints = user.totalPoints ?? 0;
+    if (userPoints < foodCost) {
       return { success: false, error: "Not enough points to feed pet" };
     }
 
@@ -394,12 +395,14 @@ export class DatabaseStorage implements IStorage {
 
     // Deduct points from user
     await this.updateUser(userId, {
-      totalPoints: user.totalPoints - foodCost,
+      totalPoints: userPoints - foodCost,
     });
 
     // Update pet stats
-    const newHappiness = Math.min(100, pet.happiness + 20);
-    const newHunger = Math.max(0, pet.hunger - 30);
+    const currentHappiness = pet.happiness ?? 100;
+    const currentHunger = pet.hunger ?? 0;
+    const newHappiness = Math.min(100, currentHappiness + 20);
+    const newHunger = Math.max(0, currentHunger - 30);
 
     await this.updatePet(pet.id, {
       happiness: newHappiness,
@@ -422,8 +425,10 @@ export class DatabaseStorage implements IStorage {
 
       // Increase hunger by 5 per hour, decrease happiness if very hungry
       const hungerIncrease = Math.floor(hoursSinceLastFed * 5);
-      const newHunger = Math.min(100, pet.hunger + hungerIncrease);
-      const newHappiness = newHunger > 80 ? Math.max(0, pet.happiness - 10) : pet.happiness;
+      const currentHunger = pet.hunger ?? 0;
+      const currentHappiness = pet.happiness ?? 100;
+      const newHunger = Math.min(100, currentHunger + hungerIncrease);
+      const newHappiness = newHunger > 80 ? Math.max(0, currentHappiness - 10) : currentHappiness;
 
       if (hungerIncrease > 0) {
         await this.updatePet(pet.id, {

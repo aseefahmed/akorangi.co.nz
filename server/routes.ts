@@ -287,6 +287,94 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Pet routes
+  app.post("/api/pets", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { petType, name } = req.body;
+
+      if (!petType || !name) {
+        return res.status(400).json({ message: "Pet type and name are required" });
+      }
+
+      const validPetTypes = ["cat", "dog", "dragon", "robot", "owl", "fox"];
+      if (!validPetTypes.includes(petType)) {
+        return res.status(400).json({ message: "Invalid pet type" });
+      }
+
+      // Check if user already has a pet
+      const existingPet = await storage.getUserPet(userId);
+      if (existingPet) {
+        return res.status(400).json({ message: "User already has a pet" });
+      }
+
+      const pet = await storage.createPet({
+        userId,
+        petType,
+        name,
+        level: 1,
+        experience: 0,
+        happiness: 100,
+        hunger: 0,
+      });
+
+      res.json(pet);
+    } catch (error) {
+      console.error("Error creating pet:", error);
+      res.status(500).json({ message: "Failed to create pet" });
+    }
+  });
+
+  app.get("/api/pets", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const pet = await storage.getUserPet(userId);
+      res.json(pet || null);
+    } catch (error) {
+      console.error("Error fetching pet:", error);
+      res.status(500).json({ message: "Failed to fetch pet" });
+    }
+  });
+
+  app.post("/api/pets/feed", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const foodCost = 50; // Cost to feed pet in points
+
+      const result = await storage.feedPet(userId, foodCost);
+      
+      if (!result.success) {
+        return res.status(400).json({ message: result.error });
+      }
+
+      res.json(result.pet);
+    } catch (error) {
+      console.error("Error feeding pet:", error);
+      res.status(500).json({ message: "Failed to feed pet" });
+    }
+  });
+
+  app.patch("/api/pets/:id", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const petId = req.params.id;
+      const updates = req.body;
+
+      // Verify pet belongs to user
+      const pet = await storage.getUserPet(userId);
+      if (!pet || pet.id !== petId) {
+        return res.status(404).json({ message: "Pet not found" });
+      }
+
+      await storage.updatePet(petId, updates);
+      const updatedPet = await storage.getUserPet(userId);
+      res.json(updatedPet);
+    } catch (error) {
+      console.error("Error updating pet:", error);
+      res.status(500).json({ message: "Failed to update pet" });
+    }
+  });
+
   // Parent/Teacher Dashboard routes
   app.post("/api/student-links", isAuthenticated, async (req: any, res) => {
     try {
