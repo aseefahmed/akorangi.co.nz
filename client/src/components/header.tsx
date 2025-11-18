@@ -562,9 +562,14 @@ export function Header() {
 
                     {/* Features Section */}
                     <div className="py-2">
-                      <div className="px-3 mb-2 flex items-center gap-2">
-                        <Eye className="w-4 h-4 text-primary" />
-                        <span className="text-sm font-semibold">Features</span>
+                      <div className="px-3 mb-2">
+                        <div className="flex items-center gap-2 mb-1">
+                          <Eye className="w-4 h-4 text-primary" />
+                          <span className="text-sm font-semibold">Features</span>
+                        </div>
+                        <p className="text-xs text-muted-foreground">
+                          Interactive learning for Years 1-8
+                        </p>
                       </div>
                       <div className="space-y-1">
                         <Button variant="ghost" size="sm" className="w-full justify-start pl-9" onClick={() => setMobileMenuOpen(false)} data-testid="mobile-feature-ai-practice">
@@ -573,17 +578,25 @@ export function Header() {
                         </Button>
                         <Button variant="ghost" size="sm" className="w-full justify-start pl-9" onClick={() => setMobileMenuOpen(false)} data-testid="mobile-feature-adaptive">
                           <TrendingUp className="w-3 h-3 mr-2" />
-                          Adaptive Learning
+                          Adaptive Difficulty
+                        </Button>
+                        <Button variant="ghost" size="sm" className="w-full justify-start pl-9" onClick={() => setMobileMenuOpen(false)} data-testid="mobile-feature-curriculum">
+                          <GraduationCap className="w-3 h-3 mr-2" />
+                          NZ Curriculum
                         </Button>
                         <Link href="/stories">
                           <Button variant="ghost" size="sm" className="w-full justify-start pl-9" onClick={() => setMobileMenuOpen(false)} data-testid="mobile-feature-story-mode">
                             <BookOpen className="w-3 h-3 mr-2" />
-                            Story Adventures
+                            Story Mode
                           </Button>
                         </Link>
                         <Button variant="ghost" size="sm" className="w-full justify-start pl-9" onClick={() => setMobileMenuOpen(false)} data-testid="mobile-feature-virtual-pets">
                           <Heart className="w-3 h-3 mr-2" />
                           Virtual Pets
+                        </Button>
+                        <Button variant="ghost" size="sm" className="w-full justify-start pl-9" onClick={() => setMobileMenuOpen(false)} data-testid="mobile-feature-gamification">
+                          <Star className="w-3 h-3 mr-2" />
+                          Points & Rewards
                         </Button>
                         <Link href="/progress">
                           <Button variant="ghost" size="sm" className="w-full justify-start pl-9" onClick={() => setMobileMenuOpen(false)} data-testid="mobile-feature-progress">
