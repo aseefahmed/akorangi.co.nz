@@ -4,6 +4,7 @@ import {
   sessionQuestions,
   achievements,
   userAchievements,
+  studentLinks,
   type User,
   type UpsertUser,
   type PracticeSession,
@@ -12,6 +13,8 @@ import {
   type InsertSessionQuestion,
   type Achievement,
   type UserAchievement,
+  type StudentLink,
+  type InsertStudentLink,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, and } from "drizzle-orm";
@@ -50,6 +53,12 @@ export interface IStorage {
   getUserAchievements(userId: string): Promise<UserAchievement[]>;
   unlockAchievement(userId: string, achievementId: string): Promise<void>;
   checkAndUnlockAchievements(userId: string): Promise<void>;
+
+  // Student link operations
+  createStudentLink(link: InsertStudentLink): Promise<StudentLink>;
+  getStudentLinks(supervisorId: string): Promise<(StudentLink & { student: User })[]>;
+  approveStudentLink(linkId: string): Promise<void>;
+  deleteStudentLink(linkId: string): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -294,6 +303,47 @@ export class DatabaseStorage implements IStorage {
         await this.unlockAchievement(userId, achievement.id);
       }
     }
+  }
+
+  // Student link operations
+  async createStudentLink(linkData: InsertStudentLink): Promise<StudentLink> {
+    const [link] = await db.insert(studentLinks).values(linkData).returning();
+    return link;
+  }
+
+  async getStudentLinks(supervisorId: string): Promise<(StudentLink & { student: User })[]> {
+    const links = await db
+      .select()
+      .from(studentLinks)
+      .where(eq(studentLinks.supervisorId, supervisorId))
+      .orderBy(desc(studentLinks.createdAt));
+
+    // Fetch student details for each link
+    const linksWithStudents = await Promise.all(
+      links.map(async (link) => {
+        const [student] = await db
+          .select()
+          .from(users)
+          .where(eq(users.id, link.studentId));
+        return {
+          ...link,
+          student,
+        };
+      })
+    );
+
+    return linksWithStudents;
+  }
+
+  async approveStudentLink(linkId: string): Promise<void> {
+    await db
+      .update(studentLinks)
+      .set({ approved: true })
+      .where(eq(studentLinks.id, linkId));
+  }
+
+  async deleteStudentLink(linkId: string): Promise<void> {
+    await db.delete(studentLinks).where(eq(studentLinks.id, linkId));
   }
 }
 

@@ -31,7 +31,8 @@ export const users = pgTable("users", {
   firstName: varchar("first_name"),
   lastName: varchar("last_name"),
   profileImageUrl: varchar("profile_image_url"),
-  yearLevel: integer("year_level").default(1), // NZ curriculum Years 1-8
+  role: varchar("role").default("student"), // "student", "parent", "teacher"
+  yearLevel: integer("year_level").default(1), // NZ curriculum Years 1-8 (for students only)
   totalPoints: integer("total_points").default(0),
   currentStreak: integer("current_streak").default(0),
   longestStreak: integer("longest_streak").default(0),
@@ -48,10 +49,49 @@ export const users = pgTable("users", {
 export const usersRelations = relations(users, ({ many }) => ({
   practiceSessions: many(practiceSessions),
   achievements: many(userAchievements),
+  // For parents/teachers: students they supervise
+  supervisedStudents: many(studentLinks, { relationName: "supervisor" }),
+  // For students: supervisors monitoring them
+  supervisors: many(studentLinks, { relationName: "student" }),
 }));
 
 export type User = typeof users.$inferSelect;
 export type UpsertUser = typeof users.$inferInsert;
+
+// Student links table - connects students to parents/teachers
+export const studentLinks = pgTable("student_links", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  supervisorId: varchar("supervisor_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }), // parent or teacher
+  studentId: varchar("student_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  relationship: varchar("relationship").notNull(), // "parent" or "teacher"
+  approved: boolean("approved").default(false), // requires student/parent approval
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const studentLinksRelations = relations(studentLinks, ({ one }) => ({
+  supervisor: one(users, {
+    fields: [studentLinks.supervisorId],
+    references: [users.id],
+    relationName: "supervisor",
+  }),
+  student: one(users, {
+    fields: [studentLinks.studentId],
+    references: [users.id],
+    relationName: "student",
+  }),
+}));
+
+export const insertStudentLinkSchema = createInsertSchema(studentLinks).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type StudentLink = typeof studentLinks.$inferSelect;
+export type InsertStudentLink = z.infer<typeof insertStudentLinkSchema>;
 
 // Practice sessions table
 export const practiceSessions = pgTable("practice_sessions", {

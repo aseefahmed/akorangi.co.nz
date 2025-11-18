@@ -11,6 +11,7 @@ import Landing from "@/pages/landing";
 import Dashboard from "@/pages/dashboard";
 import Practice from "@/pages/practice";
 import ProgressPage from "@/pages/progress";
+import ParentDashboard from "@/pages/parent-dashboard";
 
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -46,6 +47,7 @@ function Router() {
         <Route path="/dashboard" component={Dashboard} />
         <Route path="/practice/:subject" component={Practice} />
         <Route path="/progress" component={ProgressPage} />
+        <Route path="/parent-dashboard" component={ParentDashboard} />
         <Route component={NotFound} />
       </Switch>
     </>

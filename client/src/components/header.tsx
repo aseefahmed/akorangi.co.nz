@@ -10,7 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Star, Flame, User, LogOut, BarChart3, Home } from "lucide-react";
+import { Star, Flame, User, LogOut, BarChart3, Home, Users } from "lucide-react";
 import { Link } from "wouter";
 
 export function Header() {
@@ -110,6 +110,16 @@ export function Header() {
                   </div>
                 </Link>
               </DropdownMenuItem>
+              {(user?.role === "parent" || user?.role === "teacher") && (
+                <DropdownMenuItem asChild>
+                  <Link href="/parent-dashboard">
+                    <div className="flex items-center w-full cursor-pointer" data-testid="link-parent-dashboard">
+                      <Users className="w-4 h-4 mr-2" />
+                      {user.role === "teacher" ? "My Students" : "My Children"}
+                    </div>
+                  </Link>
+                </DropdownMenuItem>
+              )}
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 onClick={() => {

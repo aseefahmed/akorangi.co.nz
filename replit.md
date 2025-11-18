@@ -4,7 +4,9 @@
 
 SmartLearn NZ is an AI-powered educational platform designed for New Zealand children (Years 1-8). The application provides personalized practice questions for mathematics and English, aligned with the New Zealand curriculum. It features gamification elements including points, achievements, streaks, and real-time feedback to make learning engaging and fun for children.
 
-The platform uses OpenAI's GPT-5 model to dynamically generate curriculum-aligned questions, providing adaptive learning experiences that adjust to each student's year level and progress.
+The platform uses OpenAI's GPT-5 model to dynamically generate curriculum-aligned questions, providing adaptive learning experiences that automatically adjust difficulty based on student performance (85%+ accuracy increases difficulty, 40% or less decreases difficulty).
+
+Parents and teachers can monitor student progress through dedicated dashboards showing subject-specific statistics, accuracy trends, and adaptive difficulty levels.
 
 ## User Preferences
 
@@ -60,7 +62,8 @@ Preferred communication style: Simple, everyday language.
 - Migrations managed through drizzle-kit
 
 **Data Models**
-- **users**: Student profiles with year level, points, streaks, and progress tracking
+- **users**: Student/parent/teacher profiles with role differentiation, year level (students), points, streaks, and adaptive difficulty tracking
+- **studentLinks**: Connections between parents/teachers (supervisors) and students with approval workflow
 - **practiceSessions**: Individual learning sessions with subject, duration, and performance metrics
 - **sessionQuestions**: Individual questions within sessions with answers and feedback
 - **achievements**: Predefined achievement definitions (badges, milestones)
@@ -71,6 +74,9 @@ Preferred communication style: Simple, everyday language.
 - Denormalized user stats (totalPoints, currentStreak) for performance
 - Session questions stored separately for detailed analytics
 - Achievement system uses category-based requirements for flexible unlocking logic
+- Role-based access with student/parent/teacher differentiation
+- Student-supervisor linking system with approval workflow for data privacy
+- Adaptive difficulty system tracks per-subject difficulty levels (easy/medium/hard) and recent accuracy percentages
 
 ### Authentication & Authorization
 

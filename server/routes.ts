@@ -9,9 +9,12 @@ import {
   validateAnswerSchema,
   insertPracticeSessionSchema,
   insertSessionQuestionSchema,
+  users as usersTable,
 } from "@shared/schema";
 import { randomUUID } from "crypto";
 import { z } from "zod";
+import { db } from "./db";
+import { eq } from "drizzle-orm";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Auth middleware
@@ -281,6 +284,242 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching user achievements:", error);
       res.status(500).json({ message: "Failed to fetch achievements" });
+    }
+  });
+
+  // Parent/Teacher Dashboard routes
+  app.post("/api/student-links", isAuthenticated, async (req: any, res) => {
+    try {
+      const supervisorId = req.user.claims.sub;
+      const { studentId, relationship } = req.body;
+
+      if (!studentId || !relationship) {
+        return res.status(400).json({ message: "Student ID and relationship are required" });
+      }
+
+      if (relationship !== "parent" && relationship !== "teacher") {
+        return res.status(400).json({ message: "Relationship must be 'parent' or 'teacher'" });
+      }
+
+      // Verify supervisor has correct role
+      const supervisor = await storage.getUser(supervisorId);
+      if (!supervisor) {
+        return res.status(404).json({ message: "Supervisor not found" });
+      }
+
+      if (supervisor.role !== "parent" && supervisor.role !== "teacher") {
+        return res.status(403).json({ 
+          message: "Only parents and teachers can create student links" 
+        });
+      }
+
+      // Verify target is a student
+      const targetStudent = await storage.getUser(studentId);
+      if (!targetStudent) {
+        return res.status(404).json({ message: "Student not found" });
+      }
+
+      if (targetStudent.role !== "student") {
+        return res.status(400).json({ 
+          message: "Can only create links to users with student role" 
+        });
+      }
+
+      const link = await storage.createStudentLink({
+        supervisorId,
+        studentId,
+        relationship,
+        approved: true, // Auto-approve for now (can add approval workflow later)
+      });
+
+      res.json(link);
+    } catch (error) {
+      console.error("Error creating student link:", error);
+      res.status(500).json({ message: "Failed to create student link" });
+    }
+  });
+
+  // Find student by email (for linking)
+  app.get("/api/students/find", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { email } = req.query;
+      
+      if (!email || typeof email !== "string") {
+        return res.status(400).json({ message: "Email parameter is required" });
+      }
+
+      // Verify requester is parent or teacher
+      const requester = await storage.getUser(userId);
+      if (!requester || (requester.role !== "parent" && requester.role !== "teacher")) {
+        return res.status(403).json({ 
+          message: "Only parents and teachers can search for students" 
+        });
+      }
+
+      // Find user by email
+      const users = await db.select().from(usersTable).where(eq(usersTable.email, email));
+      
+      if (users.length === 0) {
+        return res.status(404).json({ message: "Student not found with that email" });
+      }
+
+      const user = users[0];
+
+      // Verify found user is a student
+      if (user.role !== "student") {
+        return res.status(404).json({ message: "User found is not a student" });
+      }
+
+      // Only return basic info for privacy
+      res.json({
+        id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        yearLevel: user.yearLevel,
+      });
+    } catch (error) {
+      console.error("Error finding student:", error);
+      res.status(500).json({ message: "Failed to find student" });
+    }
+  });
+
+  app.get("/api/student-links", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const links = await storage.getStudentLinks(userId);
+      res.json(links);
+    } catch (error) {
+      console.error("Error fetching student links:", error);
+      res.status(500).json({ message: "Failed to fetch student links" });
+    }
+  });
+
+  app.patch("/api/student-links/:id/approve", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { id } = req.params;
+      
+      // Get the link to verify ownership
+      const links = await storage.getStudentLinks(userId);
+      const linkToApprove = links.find(link => link.id === id);
+      
+      if (!linkToApprove) {
+        return res.status(403).json({ 
+          message: "Access denied. You can only approve links you own." 
+        });
+      }
+      
+      await storage.approveStudentLink(id);
+      res.json({ message: "Student link approved successfully" });
+    } catch (error) {
+      console.error("Error approving student link:", error);
+      res.status(500).json({ message: "Failed to approve student link" });
+    }
+  });
+
+  app.delete("/api/student-links/:id", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { id } = req.params;
+      
+      // Get the link to verify ownership
+      const links = await storage.getStudentLinks(userId);
+      const linkToDelete = links.find(link => link.id === id);
+      
+      if (!linkToDelete) {
+        return res.status(403).json({ 
+          message: "Access denied. You can only delete links you own." 
+        });
+      }
+      
+      await storage.deleteStudentLink(id);
+      res.json({ message: "Student link deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting student link:", error);
+      res.status(500).json({ message: "Failed to delete student link" });
+    }
+  });
+
+  // Get aggregated stats for a student (for parent/teacher dashboard)
+  app.get("/api/students/:studentId/stats", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { studentId } = req.params;
+      
+      // Authorization: Check if user is the student themselves OR a linked supervisor
+      const isOwnStats = userId === studentId;
+      let isAuthorized = isOwnStats;
+      
+      if (!isOwnStats) {
+        // Check if user is a linked supervisor with approved access
+        const links = await storage.getStudentLinks(userId);
+        isAuthorized = links.some(
+          link => link.studentId === studentId && link.approved
+        );
+      }
+
+      if (!isAuthorized) {
+        return res.status(403).json({ 
+          message: "Access denied. You must be linked to this student to view their stats." 
+        });
+      }
+      
+      // Get student user data
+      const student = await storage.getUser(studentId);
+      if (!student) {
+        return res.status(404).json({ message: "Student not found" });
+      }
+
+      // Get all sessions for the student
+      const sessions = await storage.getUserAllSessions(studentId);
+
+      // Calculate subject-specific stats
+      const mathsSessions = sessions.filter(s => s.subject === "maths" && s.completedAt);
+      const englishSessions = sessions.filter(s => s.subject === "english" && s.completedAt);
+
+      const mathsStats = {
+        totalSessions: mathsSessions.length,
+        totalQuestions: mathsSessions.reduce((sum, s) => sum + (s.questionsAttempted || 0), 0),
+        correctAnswers: mathsSessions.reduce((sum, s) => sum + (s.questionsCorrect || 0), 0),
+        accuracy: 0,
+        difficulty: student.mathsDifficulty,
+      };
+
+      if (mathsStats.totalQuestions > 0) {
+        mathsStats.accuracy = Math.round((mathsStats.correctAnswers / mathsStats.totalQuestions) * 100);
+      }
+
+      const englishStats = {
+        totalSessions: englishSessions.length,
+        totalQuestions: englishSessions.reduce((sum, s) => sum + (s.questionsAttempted || 0), 0),
+        correctAnswers: englishSessions.reduce((sum, s) => sum + (s.questionsCorrect || 0), 0),
+        accuracy: 0,
+        difficulty: student.englishDifficulty,
+      };
+
+      if (englishStats.totalQuestions > 0) {
+        englishStats.accuracy = Math.round((englishStats.correctAnswers / englishStats.totalQuestions) * 100);
+      }
+
+      res.json({
+        student: {
+          id: student.id,
+          firstName: student.firstName,
+          lastName: student.lastName,
+          yearLevel: student.yearLevel,
+          totalPoints: student.totalPoints,
+          currentStreak: student.currentStreak,
+          longestStreak: student.longestStreak,
+        },
+        maths: mathsStats,
+        english: englishStats,
+        recentSessions: sessions.slice(0, 10),
+      });
+    } catch (error) {
+      console.error("Error fetching student stats:", error);
+      res.status(500).json({ message: "Failed to fetch student stats" });
     }
   });
 
