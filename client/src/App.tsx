@@ -47,6 +47,7 @@ function Router() {
       <Switch>
         <Route path="/" component={Dashboard} />
         <Route path="/dashboard" component={Dashboard} />
+        <Route path="/practice" component={Practice} />
         <Route path="/practice/:subject" component={Practice} />
         <Route path="/progress" component={ProgressPage} />
         <Route path="/parent-dashboard" component={ParentDashboard} />
