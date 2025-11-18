@@ -35,6 +35,12 @@ Preferred communication style: Simple, everyday language.
 - Theme state managed via Context API with localStorage persistence
 - Session state managed server-side via express-session
 
+**API Request Pattern**
+- `apiRequest` function in `client/src/lib/queryClient.ts` handles all POST/PATCH/DELETE requests
+- Returns parsed JSON data (not raw Response objects) for consistency with query responses
+- Automatically includes credentials and handles content-type headers
+- Mutations use `apiRequest` for data modification, queries use default query function
+
 ### Backend Architecture
 
 **Server Framework**
