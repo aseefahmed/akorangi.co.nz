@@ -39,6 +39,17 @@ Preferred communication style: Simple, everyday language.
 - Custom color palette optimized for educational content with light/dark theme support
 - Gamification elements including confetti animations (canvas-confetti) for achievements
 
+**Navigation System**
+- Sticky header with mega menu dropdowns for Practice, Features, and Achievements
+- **Features Mega Menu**: Eye-catching showcase of platform capabilities organized into three themed columns
+  - **Desktop**: 800px mega menu with gradient hero section, dual CTAs ("Try Practice Now", "Start a Story"), and three-column grid (Learn/Adventure/Grow) presenting all 7 core features
+  - **Mobile**: Compact grouped section in hamburger menu with hero tagline and all 7 features as indented buttons
+  - **Features Highlighted**: AI-Powered Questions, Adaptive Difficulty, NZ Curriculum, Story Mode, Virtual Pets, Points & Rewards, Progress Tracking
+  - All interactive elements include data-testid attributes for automation testing
+  - Uses Lucide icons throughout (no emojis)
+- Mobile hamburger menu with responsive sheet component for smaller viewports
+- Breadcrumb navigation and contextual back buttons for story/practice flows
+
 **State Management**
 - React Query handles all server state (user data, practice sessions, achievements)
 - Local component state using React hooks
