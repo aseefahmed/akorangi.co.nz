@@ -1,8 +1,8 @@
-# SmartLearn NZ - Interactive AI Education Platform
+# AkoRangi - Interactive AI Education Platform
 
 ## Overview
 
-SmartLearn NZ is an AI-powered educational platform designed for New Zealand children (Years 1-8). The application provides personalized practice questions for mathematics and English, aligned with the New Zealand curriculum. It features gamification elements including points, achievements, streaks, virtual pet companions, and real-time feedback to make learning engaging and fun for children.
+AkoRangi is an AI-powered educational platform designed for New Zealand children (Years 1-8). The application provides personalized practice questions for mathematics and English, aligned with the New Zealand curriculum. It features gamification elements including points, achievements, streaks, virtual pet companions, and real-time feedback to make learning engaging and fun for children.
 
 The platform uses OpenAI's GPT-5 model to dynamically generate curriculum-aligned questions, providing adaptive learning experiences that automatically adjust difficulty based on student performance (85%+ accuracy increases difficulty, 40% or less decreases difficulty).
 
