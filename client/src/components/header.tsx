@@ -56,6 +56,7 @@ import { Link, useLocation } from "wouter";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import logoImage from "@assets/generated_images/AkoRangi_educational_logo_design_8d5c3a98.png";
 
 export function Header() {
   const { user, isAuthenticated } = useAuth();
@@ -67,9 +68,10 @@ export function Header() {
       <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b shadow-sm">
         <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between gap-4">
           <Link href="/">
-            <div className="flex items-center gap-2 hover-elevate active-elevate-2 px-3 py-2 rounded-lg cursor-pointer" data-testid="link-logo-landing">
+            <div className="flex items-center gap-3 hover-elevate active-elevate-2 px-3 py-2 rounded-lg cursor-pointer" data-testid="link-logo-landing">
+              <img src={logoImage} alt="AkoRangi Logo" className="w-10 h-10" />
               <span className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-                SmartLearn NZ
+                AkoRangi
               </span>
             </div>
           </Link>
@@ -501,9 +503,10 @@ export function Header() {
         <div className="h-16 flex items-center justify-between gap-4">
           {/* Logo */}
           <Link href="/dashboard">
-            <div className="flex items-center gap-2 hover-elevate active-elevate-2 px-3 py-2 rounded-lg cursor-pointer" data-testid="link-logo">
+            <div className="flex items-center gap-3 hover-elevate active-elevate-2 px-3 py-2 rounded-lg cursor-pointer" data-testid="link-logo">
+              <img src={logoImage} alt="AkoRangi Logo" className="w-10 h-10" />
               <span className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-                SmartLearn NZ
+                AkoRangi
               </span>
             </div>
           </Link>
