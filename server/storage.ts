@@ -5,6 +5,7 @@ import {
   achievements,
   userAchievements,
   studentLinks,
+  pets,
   type User,
   type UpsertUser,
   type PracticeSession,
@@ -15,6 +16,8 @@ import {
   type UserAchievement,
   type StudentLink,
   type InsertStudentLink,
+  type Pet,
+  type InsertPet,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, and } from "drizzle-orm";
@@ -59,6 +62,13 @@ export interface IStorage {
   getStudentLinks(supervisorId: string): Promise<(StudentLink & { student: User })[]>;
   approveStudentLink(linkId: string): Promise<void>;
   deleteStudentLink(linkId: string): Promise<void>;
+
+  // Pet operations
+  createPet(pet: InsertPet): Promise<Pet>;
+  getUserPet(userId: string): Promise<Pet | undefined>;
+  updatePet(petId: string, updates: Partial<Pet>): Promise<void>;
+  feedPet(userId: string, foodCost: number): Promise<{ success: boolean; pet?: Pet; error?: string }>;
+  updatePetHunger(): Promise<void>; // Called periodically to increase hunger
 }
 
 export class DatabaseStorage implements IStorage {
@@ -344,6 +354,84 @@ export class DatabaseStorage implements IStorage {
 
   async deleteStudentLink(linkId: string): Promise<void> {
     await db.delete(studentLinks).where(eq(studentLinks.id, linkId));
+  }
+
+  // Pet operations
+  async createPet(petData: InsertPet): Promise<Pet> {
+    const [pet] = await db.insert(pets).values(petData).returning();
+    return pet;
+  }
+
+  async getUserPet(userId: string): Promise<Pet | undefined> {
+    const [pet] = await db.select().from(pets).where(eq(pets.userId, userId));
+    return pet;
+  }
+
+  async updatePet(petId: string, updates: Partial<Pet>): Promise<void> {
+    await db
+      .update(pets)
+      .set({
+        ...updates,
+        updatedAt: new Date(),
+      })
+      .where(eq(pets.id, petId));
+  }
+
+  async feedPet(userId: string, foodCost: number): Promise<{ success: boolean; pet?: Pet; error?: string }> {
+    const user = await this.getUser(userId);
+    if (!user) {
+      return { success: false, error: "User not found" };
+    }
+
+    if (user.totalPoints < foodCost) {
+      return { success: false, error: "Not enough points to feed pet" };
+    }
+
+    const pet = await this.getUserPet(userId);
+    if (!pet) {
+      return { success: false, error: "Pet not found" };
+    }
+
+    // Deduct points from user
+    await this.updateUser(userId, {
+      totalPoints: user.totalPoints - foodCost,
+    });
+
+    // Update pet stats
+    const newHappiness = Math.min(100, pet.happiness + 20);
+    const newHunger = Math.max(0, pet.hunger - 30);
+
+    await this.updatePet(pet.id, {
+      happiness: newHappiness,
+      hunger: newHunger,
+      lastFed: new Date(),
+    });
+
+    const updatedPet = await this.getUserPet(userId);
+    return { success: true, pet: updatedPet };
+  }
+
+  async updatePetHunger(): Promise<void> {
+    // Get all pets
+    const allPets = await db.select().from(pets);
+    
+    for (const pet of allPets) {
+      const hoursSinceLastFed = pet.lastFed
+        ? (Date.now() - pet.lastFed.getTime()) / (1000 * 60 * 60)
+        : 24;
+
+      // Increase hunger by 5 per hour, decrease happiness if very hungry
+      const hungerIncrease = Math.floor(hoursSinceLastFed * 5);
+      const newHunger = Math.min(100, pet.hunger + hungerIncrease);
+      const newHappiness = newHunger > 80 ? Math.max(0, pet.happiness - 10) : pet.happiness;
+
+      if (hungerIncrease > 0) {
+        await this.updatePet(pet.id, {
+          hunger: newHunger,
+          happiness: newHappiness,
+        });
+      }
+    }
   }
 }
 

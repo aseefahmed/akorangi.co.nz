@@ -46,9 +46,10 @@ export const users = pgTable("users", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
-export const usersRelations = relations(users, ({ many }) => ({
+export const usersRelations = relations(users, ({ many, one }) => ({
   practiceSessions: many(practiceSessions),
   achievements: many(userAchievements),
+  pet: one(pets),
   // For parents/teachers: students they supervise
   supervisedStudents: many(studentLinks, { relationName: "supervisor" }),
   // For students: supervisors monitoring them
@@ -57,6 +58,40 @@ export const usersRelations = relations(users, ({ many }) => ({
 
 export type User = typeof users.$inferSelect;
 export type UpsertUser = typeof users.$inferInsert;
+
+// Pets table - virtual companions that grow with learning
+export const pets = pgTable("pets", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id")
+    .notNull()
+    .unique()
+    .references(() => users.id, { onDelete: "cascade" }),
+  petType: varchar("pet_type").notNull(), // "cat", "dog", "dragon", "robot", "owl", "fox"
+  name: varchar("name").notNull(),
+  level: integer("level").default(1),
+  experience: integer("experience").default(0), // Points toward next level
+  happiness: integer("happiness").default(100), // 0-100
+  hunger: integer("hunger").default(0), // 0-100 (higher = more hungry)
+  lastFed: timestamp("last_fed"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const petsRelations = relations(pets, ({ one }) => ({
+  user: one(users, {
+    fields: [pets.userId],
+    references: [users.id],
+  }),
+}));
+
+export const insertPetSchema = createInsertSchema(pets).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export type Pet = typeof pets.$inferSelect;
+export type InsertPet = z.infer<typeof insertPetSchema>;
 
 // Student links table - connects students to parents/teachers
 export const studentLinks = pgTable("student_links", {
