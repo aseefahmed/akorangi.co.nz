@@ -6,6 +6,9 @@ import {
   userAchievements,
   studentLinks,
   pets,
+  stories,
+  chapters,
+  userStoryProgress,
   type User,
   type UpsertUser,
   type PracticeSession,
@@ -18,6 +21,12 @@ import {
   type InsertStudentLink,
   type Pet,
   type InsertPet,
+  type Story,
+  type InsertStory,
+  type Chapter,
+  type InsertChapter,
+  type UserStoryProgress,
+  type InsertUserStoryProgress,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, and } from "drizzle-orm";
@@ -69,6 +78,20 @@ export interface IStorage {
   updatePet(petId: string, updates: Partial<Pet>): Promise<void>;
   feedPet(userId: string, foodCost: number): Promise<{ success: boolean; pet?: Pet; error?: string }>;
   updatePetHunger(): Promise<void>; // Called periodically to increase hunger
+
+  // Story/Adventure operations
+  getActiveStories(): Promise<Story[]>;
+  getStory(id: string): Promise<Story | undefined>;
+  getStoryChapters(storyId: string): Promise<Chapter[]>;
+  getChapter(id: string): Promise<Chapter | undefined>;
+  
+  // User story progress operations
+  getUserStoryProgress(userId: string, storyId: string): Promise<UserStoryProgress | undefined>;
+  getUserAllStoryProgress(userId: string): Promise<UserStoryProgress[]>;
+  createStoryProgress(progress: InsertUserStoryProgress): Promise<UserStoryProgress>;
+  updateStoryProgress(id: string, updates: Partial<UserStoryProgress>): Promise<void>;
+  completeChapter(userId: string, storyId: string, chapterNumber: number): Promise<{ completed: boolean; storyCompleted: boolean }>;
+  recordStoryQuestion(userId: string, storyId: string): Promise<void>; // Increment questions completed for current chapter
 }
 
 export class DatabaseStorage implements IStorage {
@@ -437,6 +460,96 @@ export class DatabaseStorage implements IStorage {
         });
       }
     }
+  }
+
+  // Story/Adventure operations
+  async getActiveStories(): Promise<Story[]> {
+    return db.select().from(stories).where(eq(stories.isActive, true)).orderBy(stories.order);
+  }
+
+  async getStory(id: string): Promise<Story | undefined> {
+    const results = await db.select().from(stories).where(eq(stories.id, id));
+    return results[0];
+  }
+
+  async getStoryChapters(storyId: string): Promise<Chapter[]> {
+    return db
+      .select()
+      .from(chapters)
+      .where(eq(chapters.storyId, storyId))
+      .orderBy(chapters.chapterNumber);
+  }
+
+  async getChapter(id: string): Promise<Chapter | undefined> {
+    const results = await db.select().from(chapters).where(eq(chapters.id, id));
+    return results[0];
+  }
+
+  // User story progress operations
+  async getUserStoryProgress(userId: string, storyId: string): Promise<UserStoryProgress | undefined> {
+    const results = await db
+      .select()
+      .from(userStoryProgress)
+      .where(and(eq(userStoryProgress.userId, userId), eq(userStoryProgress.storyId, storyId)));
+    return results[0];
+  }
+
+  async getUserAllStoryProgress(userId: string): Promise<UserStoryProgress[]> {
+    return db.select().from(userStoryProgress).where(eq(userStoryProgress.userId, userId));
+  }
+
+  async createStoryProgress(progress: InsertUserStoryProgress): Promise<UserStoryProgress> {
+    const results = await db.insert(userStoryProgress).values(progress).returning();
+    return results[0];
+  }
+
+  async updateStoryProgress(id: string, updates: Partial<UserStoryProgress>): Promise<void> {
+    await db
+      .update(userStoryProgress)
+      .set({
+        ...updates,
+        updatedAt: new Date(),
+      })
+      .where(eq(userStoryProgress.id, id));
+  }
+
+  async completeChapter(
+    userId: string,
+    storyId: string,
+    chapterNumber: number
+  ): Promise<{ completed: boolean; storyCompleted: boolean }> {
+    const progress = await this.getUserStoryProgress(userId, storyId);
+    if (!progress) {
+      return { completed: false, storyCompleted: false };
+    }
+
+    const completedChapters = progress.completedChapters || [];
+    if (completedChapters.includes(chapterNumber)) {
+      return { completed: true, storyCompleted: false };
+    }
+
+    const newCompletedChapters = [...completedChapters, chapterNumber];
+    const allChapters = await this.getStoryChapters(storyId);
+    const storyCompleted = newCompletedChapters.length >= allChapters.length;
+
+    await this.updateStoryProgress(progress.id, {
+      completedChapters: newCompletedChapters,
+      currentChapter: storyCompleted ? progress.currentChapter : chapterNumber + 1,
+      questionsCompleted: 0, // Reset for next chapter
+      isCompleted: storyCompleted,
+      completedAt: storyCompleted ? new Date() : undefined,
+    });
+
+    return { completed: true, storyCompleted };
+  }
+
+  async recordStoryQuestion(userId: string, storyId: string): Promise<void> {
+    const progress = await this.getUserStoryProgress(userId, storyId);
+    if (!progress) return;
+
+    await this.updateStoryProgress(progress.id, {
+      questionsCompleted: (progress.questionsCompleted || 0) + 1,
+    });
   }
 }
 

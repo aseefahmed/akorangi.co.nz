@@ -50,6 +50,7 @@ export const usersRelations = relations(users, ({ many, one }) => ({
   practiceSessions: many(practiceSessions),
   achievements: many(userAchievements),
   pet: one(pets),
+  storyProgress: many(userStoryProgress),
   // For parents/teachers: students they supervise
   supervisedStudents: many(studentLinks, { relationName: "supervisor" }),
   // For students: supervisors monitoring them
@@ -92,6 +93,108 @@ export const insertPetSchema = createInsertSchema(pets).omit({
 
 export type Pet = typeof pets.$inferSelect;
 export type InsertPet = z.infer<typeof insertPetSchema>;
+
+// Stories table - narrative-driven learning adventures
+export const stories = pgTable("stories", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  title: varchar("title").notNull(),
+  description: text("description").notNull(),
+  subject: varchar("subject").notNull(), // "maths", "english", or "both"
+  minYearLevel: integer("min_year_level").default(1),
+  maxYearLevel: integer("max_year_level").default(8),
+  difficulty: varchar("difficulty").default("medium"), // "easy", "medium", "hard"
+  imageUrl: varchar("image_url"),
+  isActive: boolean("is_active").default(true),
+  order: integer("order").default(0), // Display order
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const storiesRelations = relations(stories, ({ many }) => ({
+  chapters: many(chapters),
+  userProgress: many(userStoryProgress),
+}));
+
+export const insertStorySchema = createInsertSchema(stories).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export type Story = typeof stories.$inferSelect;
+export type InsertStory = z.infer<typeof insertStorySchema>;
+
+// Chapters table - individual chapters within stories
+export const chapters = pgTable("chapters", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  storyId: varchar("story_id")
+    .notNull()
+    .references(() => stories.id, { onDelete: "cascade" }),
+  chapterNumber: integer("chapter_number").notNull(),
+  title: varchar("title").notNull(),
+  narrative: text("narrative").notNull(), // Story text shown to user
+  objectiveDescription: text("objective_description").notNull(), // What user needs to do
+  requiredQuestions: integer("required_questions").default(5), // Questions to complete
+  subject: varchar("subject").notNull(), // "maths" or "english"
+  difficulty: varchar("difficulty").default("medium"),
+  rewardPoints: integer("reward_points").default(50), // Bonus points for completing
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const chaptersRelations = relations(chapters, ({ one }) => ({
+  story: one(stories, {
+    fields: [chapters.storyId],
+    references: [stories.id],
+  }),
+}));
+
+export const insertChapterSchema = createInsertSchema(chapters).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export type Chapter = typeof chapters.$inferSelect;
+export type InsertChapter = z.infer<typeof insertChapterSchema>;
+
+// User story progress table - tracks user progress through stories
+export const userStoryProgress = pgTable("user_story_progress", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  storyId: varchar("story_id")
+    .notNull()
+    .references(() => stories.id, { onDelete: "cascade" }),
+  currentChapter: integer("current_chapter").default(1),
+  completedChapters: integer("completed_chapters").array().default(sql`ARRAY[]::integer[]`), // Array of completed chapter numbers
+  questionsCompleted: integer("questions_completed").default(0), // For current chapter
+  isCompleted: boolean("is_completed").default(false),
+  startedAt: timestamp("started_at").defaultNow(),
+  completedAt: timestamp("completed_at"),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const userStoryProgressRelations = relations(userStoryProgress, ({ one }) => ({
+  user: one(users, {
+    fields: [userStoryProgress.userId],
+    references: [users.id],
+  }),
+  story: one(stories, {
+    fields: [userStoryProgress.storyId],
+    references: [stories.id],
+  }),
+}));
+
+export const insertUserStoryProgressSchema = createInsertSchema(userStoryProgress).omit({
+  id: true,
+  startedAt: true,
+  updatedAt: true,
+});
+
+export type UserStoryProgress = typeof userStoryProgress.$inferSelect;
+export type InsertUserStoryProgress = z.infer<typeof insertUserStoryProgressSchema>;
 
 // Student links table - connects students to parents/teachers
 export const studentLinks = pgTable("student_links", {
