@@ -125,6 +125,7 @@ export default function Landing() {
           <motion.h1
             variants={itemVariants}
             className="text-5xl sm:text-6xl lg:text-8xl font-bold mb-6 bg-gradient-to-r from-primary via-accent to-chart-3 bg-clip-text text-transparent leading-tight"
+            data-testid="heading-hero-title"
           >
             AkoRangi
           </motion.h1>
@@ -154,7 +155,7 @@ export default function Landing() {
             >
               <Button
                 size="lg"
-                className="text-lg px-10 py-7 text-white shadow-2xl bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90"
+                className="text-lg text-white shadow-2xl bg-gradient-to-r from-primary to-accent"
                 onClick={() => window.location.href = "/api/login"}
                 data-testid="button-start-learning"
               >
@@ -170,7 +171,7 @@ export default function Landing() {
               <Button
                 size="lg"
                 variant="outline"
-                className="text-lg px-10 py-7 bg-background/90 backdrop-blur-sm shadow-xl border-2 border-primary/40"
+                className="text-lg bg-background/90 backdrop-blur-sm shadow-xl border-2 border-primary/40"
                 data-testid="button-parent-login"
                 onClick={() => window.location.href = "/api/login"}
               >
@@ -345,7 +346,7 @@ export default function Landing() {
               Powerful Features
             </Badge>
             <h2 className="text-4xl sm:text-5xl font-bold mb-4 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              Why Kids Love SmartLearn
+              Why Kids Love AkoRangi
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               Everything your child needs to excel in maths and English, all in one fun platform!
@@ -849,7 +850,7 @@ export default function Landing() {
           >
             <Button
               size="lg"
-              className="text-xl px-14 py-8 shadow-2xl bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white"
+              className="text-xl shadow-2xl bg-gradient-to-r from-primary to-accent text-white"
               onClick={() => window.location.href = "/api/login"}
               data-testid="button-get-started"
             >
