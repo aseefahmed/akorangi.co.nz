@@ -273,6 +273,16 @@ export function Header() {
                   </NavigationMenuLink>
                 </NavigationMenuItem>
 
+                {/* Stories */}
+                <NavigationMenuItem>
+                  <NavigationMenuLink asChild>
+                    <Link href="/stories" className={navigationMenuTriggerStyle()} data-testid="nav-stories">
+                      <BookOpen className="w-4 h-4 mr-2" />
+                      Stories
+                    </Link>
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+
                 {/* Achievements Mega Menu */}
                 <NavigationMenuItem>
                   <NavigationMenuTrigger className="text-base" data-testid="nav-achievements-trigger">
@@ -402,6 +412,12 @@ export function Header() {
                       <Button variant="ghost" className="w-full justify-start" onClick={() => setMobileMenuOpen(false)} data-testid="mobile-nav-progress">
                         <TrendingUp className="w-4 h-4 mr-2" />
                         Progress
+                      </Button>
+                    </Link>
+                    <Link href="/stories">
+                      <Button variant="ghost" className="w-full justify-start" onClick={() => setMobileMenuOpen(false)} data-testid="mobile-nav-stories">
+                        <BookOpen className="w-4 h-4 mr-2" />
+                        Stories
                       </Button>
                     </Link>
                     <Link href="/progress">
