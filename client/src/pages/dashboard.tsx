@@ -188,7 +188,7 @@ export default function Dashboard() {
                     whileHover={{ rotate: [0, -10, 10, 0] }}
                     transition={{ duration: 0.5 }}
                   >
-                    <Brain className="w-10 h-10 text-white" />
+                    <Brain className="w-10 h-10 text-white" data-testid="icon-maths" />
                   </motion.div>
                   <div>
                     <div>Maths Practice</div>
@@ -244,7 +244,7 @@ export default function Dashboard() {
                     whileHover={{ rotate: [0, -10, 10, 0] }}
                     transition={{ duration: 0.5 }}
                   >
-                    <BookOpen className="w-10 h-10 text-white" />
+                    <BookOpen className="w-10 h-10 text-white" data-testid="icon-english" />
                   </motion.div>
                   <div>
                     <div>English Practice</div>
@@ -375,7 +375,7 @@ export default function Dashboard() {
                 </div>
               ) : achievements.length === 0 ? (
                 <div className="text-center py-6 text-muted-foreground">
-                  <Trophy className="w-10 h-10 mx-auto mb-2 opacity-50" />
+                  <Trophy className="w-10 h-10 mx-auto mb-2 opacity-50" data-testid="icon-achievements" />
                   <p className="text-sm">No achievements yet.</p>
                   <p className="text-xs">Keep practicing to unlock badges!</p>
                 </div>
@@ -388,7 +388,7 @@ export default function Dashboard() {
                       data-testid={`achievement-${achievement.id}`}
                     >
                       <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-chart-3/20 to-chart-3/10 flex items-center justify-center">
-                        <Trophy className="w-5 h-5 text-chart-3" />
+                        <Trophy className="w-5 h-5 text-chart-3" data-testid="icon-achievements" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="font-semibold text-sm truncate">
