@@ -27,8 +27,12 @@ import {
   ArrowRight,
   Home,
   Trophy,
+  Lightbulb,
+  BookOpen,
 } from "lucide-react";
 import confetti from "canvas-confetti";
+
+type QuestionType = "text" | "multiple_choice" | "fill_blank" | "word_problem" | "story";
 
 type Question = {
   id: string;
@@ -36,11 +40,16 @@ type Question = {
   correctAnswer: string;
   topic?: string;
   difficulty?: string;
+  type?: QuestionType;
+  options?: string[];
+  hint?: string;
+  explanation?: string;
 };
 
 type AnswerResult = {
   isCorrect: boolean;
   feedback: string;
+  explanation?: string;
 };
 
 export default function Practice() {
@@ -57,6 +66,7 @@ export default function Practice() {
   const [correctAnswers, setCorrectAnswers] = useState(0);
   const [sessionPoints, setSessionPoints] = useState(0);
   const [yearLevel, setYearLevel] = useState<number>(user?.yearLevel || 3);
+  const [showHint, setShowHint] = useState(false);
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
@@ -114,6 +124,7 @@ export default function Practice() {
       setCurrentQuestion(data);
       setUserAnswer("");
       setAnswerResult(null);
+      setShowHint(false);
     },
     onError: (error: Error) => {
       if (isUnauthorizedError(error)) {
@@ -201,7 +212,7 @@ export default function Practice() {
       
       toast({
         title: "Session Complete!",
-        description: `You earned ${sessionPoints} points! Great job! 🎉`,
+        description: `You earned ${sessionPoints} points! Great job!`,
       });
     },
     onError: (error: Error) => {
@@ -267,7 +278,13 @@ export default function Practice() {
         <div className="max-w-2xl mx-auto">
           <Card className="border-primary/20">
             <CardHeader className="text-center pb-6">
-              <div className="text-6xl mb-4">{subject === "maths" ? "🔢" : "📚"}</div>
+              <div className="w-24 h-24 mx-auto mb-4 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
+                {subject === "maths" ? (
+                  <Brain className="w-12 h-12 text-primary" />
+                ) : (
+                  <BookOpen className="w-12 h-12 text-accent" />
+                )}
+              </div>
               <CardTitle className="text-3xl capitalize mb-2">
                 {subject} Practice
               </CardTitle>
@@ -425,22 +442,69 @@ export default function Practice() {
                 </p>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="answer" className="text-base">Your Answer</Label>
-                <Input
-                  id="answer"
-                  value={userAnswer}
-                  onChange={(e) => setUserAnswer(e.target.value)}
-                  placeholder="Type your answer here..."
-                  className="text-lg"
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" && !submitAnswerMutation.isPending) {
-                      handleSubmitAnswer();
-                    }
-                  }}
-                  data-testid="input-answer"
-                />
-              </div>
+              {/* Multiple Choice Options */}
+              {currentQuestion.type === "multiple_choice" && currentQuestion.options ? (
+                <div className="space-y-3">
+                  <Label className="text-base">Choose your answer:</Label>
+                  <div className="grid gap-3">
+                    {currentQuestion.options.map((option, index) => (
+                      <Button
+                        key={index}
+                        variant={userAnswer === option ? "default" : "outline"}
+                        className="w-full justify-start text-left h-auto py-4 px-6"
+                        onClick={() => setUserAnswer(option)}
+                        data-testid={`button-option-${index}`}
+                      >
+                        <span className="font-semibold mr-3">{String.fromCharCode(65 + index)}.</span>
+                        <span>{option}</span>
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                /* Text Input for other question types */
+                <div className="space-y-2">
+                  <Label htmlFor="answer" className="text-base">Your Answer</Label>
+                  <Input
+                    id="answer"
+                    value={userAnswer}
+                    onChange={(e) => setUserAnswer(e.target.value)}
+                    placeholder="Type your answer here..."
+                    className="text-lg"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && !submitAnswerMutation.isPending) {
+                        handleSubmitAnswer();
+                      }
+                    }}
+                    data-testid="input-answer"
+                  />
+                </div>
+              )}
+
+              {/* Hint Button */}
+              {currentQuestion.hint && (
+                <div className="space-y-3">
+                  {!showHint ? (
+                    <Button
+                      variant="outline"
+                      className="w-full"
+                      onClick={() => setShowHint(true)}
+                      data-testid="button-show-hint"
+                    >
+                      <Lightbulb className="w-5 h-5 mr-2" />
+                      Need a hint?
+                    </Button>
+                  ) : (
+                    <div className="bg-accent/10 border border-accent/20 rounded-lg p-4" data-testid="hint-display">
+                      <p className="text-sm font-semibold mb-2 flex items-center gap-2 text-accent">
+                        <Lightbulb className="w-4 h-4" />
+                        Hint
+                      </p>
+                      <p className="leading-relaxed">{currentQuestion.hint}</p>
+                    </div>
+                  )}
+                </div>
+              )}
 
               <Button
                 className="w-full"
@@ -470,7 +534,7 @@ export default function Practice() {
                 {answerResult.isCorrect ? (
                   <div className="space-y-4">
                     <CheckCircle2 className="w-16 h-16 text-chart-2 mx-auto" />
-                    <h3 className="text-2xl font-bold text-chart-2">Correct! 🎉</h3>
+                    <h3 className="text-2xl font-bold text-chart-2">Correct!</h3>
                     <div className="flex items-center justify-center gap-2 text-xl">
                       <Star className="w-6 h-6 fill-chart-3 text-chart-3" />
                       <span className="font-bold text-chart-3">+10 points</span>
@@ -494,6 +558,17 @@ export default function Practice() {
                 </p>
                 <p className="leading-relaxed">{answerResult.feedback}</p>
               </div>
+
+              {/* Explanation Display */}
+              {(answerResult.explanation || currentQuestion?.explanation) && (
+                <div className="bg-primary/5 border border-primary/20 rounded-lg p-6 mb-6" data-testid="explanation-display">
+                  <p className="text-sm font-semibold mb-2 flex items-center gap-2 text-primary">
+                    <BookOpen className="w-4 h-4" />
+                    Explanation
+                  </p>
+                  <p className="leading-relaxed">{answerResult.explanation || currentQuestion?.explanation}</p>
+                </div>
+              )}
 
               <Button
                 className="w-full"

@@ -324,8 +324,12 @@ export default function Dashboard() {
                       data-testid={`session-${session.id}`}
                     >
                       <div className="flex items-center gap-4">
-                        <div className="text-3xl">
-                          {session.subject === "maths" ? "🔢" : "📚"}
+                        <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center">
+                          {session.subject === "maths" ? (
+                            <Brain className="w-6 h-6 text-primary" />
+                          ) : (
+                            <BookOpen className="w-6 h-6 text-accent" />
+                          )}
                         </div>
                         <div>
                           <div className="font-semibold capitalize">
@@ -383,7 +387,9 @@ export default function Dashboard() {
                       className="flex items-center gap-3 p-3 rounded-lg bg-primary/5 hover-elevate"
                       data-testid={`achievement-${achievement.id}`}
                     >
-                      <div className="text-2xl">{achievement.achievement?.icon || "🏆"}</div>
+                      <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-chart-3/20 to-chart-3/10 flex items-center justify-center">
+                        <Trophy className="w-5 h-5 text-chart-3" />
+                      </div>
                       <div className="flex-1 min-w-0">
                         <div className="font-semibold text-sm truncate">
                           {achievement.achievement?.name || "Achievement"}
@@ -399,7 +405,7 @@ export default function Dashboard() {
               
               {achievements.length > 3 && (
                 <Link href="/progress">
-                  <Button variant="outline" className="w-full mt-4" size="sm">
+                  <Button variant="outline" className="w-full mt-4" size="sm" data-testid="button-view-all-achievements">
                     View All Achievements
                   </Button>
                 </Link>
