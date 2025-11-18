@@ -20,6 +20,7 @@ export interface IStorage {
   // User operations
   getUser(id: string): Promise<User | undefined>;
   upsertUser(user: UpsertUser): Promise<User>;
+  updateUser(userId: string, updates: Partial<User>): Promise<void>;
   updateUserStats(
     userId: string,
     pointsEarned: number,
@@ -34,6 +35,7 @@ export interface IStorage {
     updates: Partial<PracticeSession>
   ): Promise<void>;
   getUserRecentSessions(userId: string, limit?: number): Promise<PracticeSession[]>;
+  getUserRecentSessionsBySubject(userId: string, subject: string, limit?: number): Promise<PracticeSession[]>;
   getUserAllSessions(userId: string): Promise<PracticeSession[]>;
 
   // Session question operations
@@ -70,6 +72,16 @@ export class DatabaseStorage implements IStorage {
       })
       .returning();
     return user;
+  }
+
+  async updateUser(userId: string, updates: Partial<User>): Promise<void> {
+    await db
+      .update(users)
+      .set({
+        ...updates,
+        updatedAt: new Date(),
+      })
+      .where(eq(users.id, userId));
   }
 
   async updateUserStats(
@@ -153,6 +165,25 @@ export class DatabaseStorage implements IStorage {
       .select()
       .from(practiceSessions)
       .where(eq(practiceSessions.userId, userId))
+      .orderBy(desc(practiceSessions.createdAt))
+      .limit(limit);
+    return sessions;
+  }
+
+  async getUserRecentSessionsBySubject(
+    userId: string,
+    subject: string,
+    limit: number = 10
+  ): Promise<PracticeSession[]> {
+    const sessions = await db
+      .select()
+      .from(practiceSessions)
+      .where(
+        and(
+          eq(practiceSessions.userId, userId),
+          eq(practiceSessions.subject, subject)
+        )
+      )
       .orderBy(desc(practiceSessions.createdAt))
       .limit(limit);
     return sessions;

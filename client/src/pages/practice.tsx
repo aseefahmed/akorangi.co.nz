@@ -310,6 +310,20 @@ export default function Practice() {
                   <Sparkles className="w-5 h-5 text-accent" />
                   <span className="font-medium">AI-Generated Questions</span>
                 </div>
+                {user && (
+                  <div className="flex items-center gap-2 pt-2 border-t">
+                    <Brain className="w-5 h-5 text-primary" />
+                    <span className="font-medium">
+                      Adaptive Difficulty:{" "}
+                      <Badge variant="secondary" className="ml-1">
+                        {subject === "maths" 
+                          ? (user.mathsDifficulty || "medium").charAt(0).toUpperCase() + (user.mathsDifficulty || "medium").slice(1)
+                          : (user.englishDifficulty || "medium").charAt(0).toUpperCase() + (user.englishDifficulty || "medium").slice(1)
+                        }
+                      </Badge>
+                    </span>
+                  </div>
+                )}
               </div>
 
               <Button

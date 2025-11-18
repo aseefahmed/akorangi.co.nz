@@ -36,6 +36,11 @@ export const users = pgTable("users", {
   currentStreak: integer("current_streak").default(0),
   longestStreak: integer("longest_streak").default(0),
   lastPracticeDate: timestamp("last_practice_date"),
+  // Adaptive difficulty tracking
+  mathsDifficulty: varchar("maths_difficulty").default("medium"), // "easy", "medium", "hard"
+  englishDifficulty: varchar("english_difficulty").default("medium"),
+  mathsAccuracyRecent: integer("maths_accuracy_recent").default(50), // percentage 0-100
+  englishAccuracyRecent: integer("english_accuracy_recent").default(50),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });

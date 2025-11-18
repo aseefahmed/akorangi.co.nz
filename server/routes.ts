@@ -3,6 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
 import { generateQuestion, validateAnswer } from "./openai";
+import { calculateAdaptiveDifficulty, updateUserDifficulty, type Subject } from "./adaptiveDifficulty";
 import { 
   generateQuestionSchema, 
   validateAnswerSchema,
@@ -102,6 +103,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Update user stats
         await storage.updateUserStats(userId, session.pointsEarned || 0, new Date());
 
+        // Re-fetch session to get final stats after all questions have been answered
+        const updatedSession = await storage.getPracticeSession(id);
+        
+        // Update adaptive difficulty based on session performance
+        const user = await storage.getUser(userId);
+        if (user && updatedSession && updatedSession.questionsAttempted && updatedSession.questionsAttempted > 0) {
+          // Get recent sessions AFTER marking this one complete
+          const recentSessions = await storage.getUserRecentSessionsBySubject(
+            userId,
+            updatedSession.subject as Subject,
+            10
+          );
+          
+          const newDifficulty = calculateAdaptiveDifficulty(
+            user,
+            updatedSession.subject as Subject,
+            recentSessions
+          );
+          
+          // Calculate recent accuracy from last 5 completed sessions
+          const last5 = recentSessions.slice(0, 5);
+          const totalAttempted = last5.reduce((sum, s) => sum + (s.questionsAttempted || 0), 0);
+          const totalCorrect = last5.reduce((sum, s) => sum + (s.questionsCorrect || 0), 0);
+          const sessionAccuracy = Math.round(
+            ((updatedSession.questionsCorrect || 0) / updatedSession.questionsAttempted) * 100
+          );
+          const newAccuracy = totalAttempted > 0 
+            ? Math.round((totalCorrect / totalAttempted) * 100)
+            : sessionAccuracy;
+          
+          await updateUserDifficulty(
+            userId,
+            updatedSession.subject as Subject,
+            newDifficulty,
+            newAccuracy,
+            storage
+          );
+        }
+
         // Check for achievements
         await storage.checkAndUnlockAchievements(userId);
 
@@ -116,6 +156,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Question generation routes
   app.post("/api/questions/generate", isAuthenticated, async (req: any, res) => {
     try {
+      const userId = req.user.claims.sub;
       const validation = generateQuestionSchema.safeParse(req.body);
       if (!validation.success) {
         return res.status(400).json({ message: "Invalid request data", errors: validation.error });
@@ -123,10 +164,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const { subject, yearLevel, topic } = validation.data;
       
-      // Generate question with error handling
+      // Get user and recent sessions for adaptive difficulty
+      const user = await storage.getUser(userId);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      const recentSessions = await storage.getUserRecentSessionsBySubject(userId, subject as Subject, 10);
+      
+      // Always calculate adaptive difficulty server-side using fresh data
+      const difficulty = calculateAdaptiveDifficulty(
+        user,
+        subject as Subject,
+        recentSessions
+      );
+      
+      // Generate question with adaptive difficulty
       let question;
       try {
-        question = await generateQuestion(subject, yearLevel, topic);
+        question = await generateQuestion(subject, yearLevel, topic, difficulty);
       } catch (error) {
         console.error("OpenAI generation error:", error);
         // Fallback to sample questions if OpenAI fails
@@ -138,13 +194,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
             ? (5 + Math.floor(Math.random() * 10)).toString()
             : "ran",
           topic: subject === "maths" ? "addition" : "grammar",
-          difficulty: "easy",
+          difficulty: difficulty,
         };
       }
 
       res.json({
         id: randomUUID(),
         ...question,
+        adaptiveDifficulty: difficulty, // Return the adaptive difficulty level
       });
     } catch (error) {
       console.error("Error generating question:", error);

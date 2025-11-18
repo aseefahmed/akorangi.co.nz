@@ -7,15 +7,20 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 export async function generateQuestion(
   subject: "maths" | "english",
   yearLevel: number,
-  topic?: string
+  topic?: string,
+  difficulty?: "easy" | "medium" | "hard"
 ): Promise<{
   question: string;
   correctAnswer: string;
   topic: string;
   difficulty: string;
 }> {
+  const difficultyModifier = difficulty 
+    ? `\nDifficulty Level: ${difficulty} - ${getDifficultyGuidance(difficulty)}`
+    : "";
+
   const prompt = `Generate a single ${subject} practice question for a New Zealand Year ${yearLevel} student.
-${topic ? `Topic: ${topic}` : ""}
+${topic ? `Topic: ${topic}` : ""}${difficultyModifier}
 
 Requirements:
 - Aligned with New Zealand curriculum for Year ${yearLevel}
@@ -28,7 +33,7 @@ Return a JSON object with:
   "question": "the practice question",
   "correctAnswer": "the correct answer",
   "topic": "specific topic (e.g., 'addition', 'reading comprehension')",
-  "difficulty": "easy, medium, or hard"
+  "difficulty": "${difficulty || 'medium'}"
 }`;
 
   const response = await openai.chat.completions.create({
@@ -49,6 +54,17 @@ Return a JSON object with:
 
   const result = JSON.parse(response.choices[0].message.content || "{}");
   return result;
+}
+
+function getDifficultyGuidance(difficulty: "easy" | "medium" | "hard"): string {
+  switch (difficulty) {
+    case "easy":
+      return "Make this question easier than typical for this year level. Use simple vocabulary and straightforward concepts.";
+    case "hard":
+      return "Make this question more challenging than typical for this year level. Include multi-step thinking or advanced concepts.";
+    default:
+      return "Make this question at a typical difficulty level for this year.";
+  }
 }
 
 export async function validateAnswer(
