@@ -22,11 +22,14 @@ import {
 } from "lucide-react";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
-import type { PracticeSession, UserAchievement } from "@shared/schema";
+import type { PracticeSession, UserAchievement, Pet } from "@shared/schema";
+import { PetSelector } from "@/components/pet-selector";
+import { PetCard } from "@/components/pet-card";
 
 export default function Dashboard() {
   const { user, isLoading, isAuthenticated } = useAuth();
   const { toast } = useToast();
+  const [petSelectorOpen, setPetSelectorOpen] = useState(false);
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
@@ -54,6 +57,21 @@ export default function Dashboard() {
     queryKey: ["/api/achievements/user"],
     enabled: isAuthenticated,
   });
+
+  const { data: pet = null, isLoading: petLoading } = useQuery<Pet | null>({
+    queryKey: ["/api/pets"],
+    enabled: isAuthenticated,
+  });
+
+  // Auto-open pet selector for new users
+  useEffect(() => {
+    if (isAuthenticated && !petLoading && !pet && user?.role === "student") {
+      const timer = setTimeout(() => {
+        setPetSelectorOpen(true);
+      }, 1500); // Show after 1.5 seconds
+      return () => clearTimeout(timer);
+    }
+  }, [isAuthenticated, petLoading, pet, user?.role]);
 
   if (isLoading || !isAuthenticated) {
     return (
@@ -292,10 +310,10 @@ export default function Dashboard() {
           </motion.div>
         </div>
 
-        {/* Stats and Achievements Row */}
+        {/* Stats, Achievements, and Pet Row */}
         <motion.div variants={itemVariants} className="grid lg:grid-cols-3 gap-6">
           {/* Recent Activity */}
-          <Card className="lg:col-span-2">
+          <Card className="lg:col-span-2 {pet ? '' : 'lg:col-span-3'}">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <TrendingUp className="w-5 h-5" />
@@ -358,62 +376,83 @@ export default function Dashboard() {
             </CardContent>
           </Card>
 
-          {/* Achievements */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Award className="w-5 h-5" />
-                Achievements
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {achievementsLoading ? (
-                <div className="space-y-3">
-                  {[1, 2].map((i) => (
-                    <Skeleton key={i} className="h-12 w-full" />
-                  ))}
-                </div>
-              ) : achievements.length === 0 ? (
-                <div className="text-center py-6 text-muted-foreground">
-                  <Trophy className="w-10 h-10 mx-auto mb-2 opacity-50" data-testid="icon-achievements" />
-                  <p className="text-sm">No achievements yet.</p>
-                  <p className="text-xs">Keep practicing to unlock badges!</p>
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  {achievements.slice(0, 3).map((achievement: any) => (
-                    <div
-                      key={achievement.id}
-                      className="flex items-center gap-3 p-3 rounded-lg bg-primary/5 hover-elevate"
-                      data-testid={`achievement-${achievement.id}`}
-                    >
-                      <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-chart-3/20 to-chart-3/10 flex items-center justify-center">
-                        <Trophy className="w-5 h-5 text-chart-3" data-testid="icon-achievements" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="font-semibold text-sm truncate">
-                          {achievement.achievement?.name || "Achievement"}
+          {/* Pet or Achievements */}
+          {pet && user?.role === "student" ? (
+            <PetCard pet={pet} userPoints={user?.totalPoints ?? 0} />
+          ) : (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Award className="w-5 h-5" />
+                  Achievements
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {achievementsLoading ? (
+                  <div className="space-y-3">
+                    {[1, 2].map((i) => (
+                      <Skeleton key={i} className="h-12 w-full" />
+                    ))}
+                  </div>
+                ) : achievements.length === 0 ? (
+                  <div className="text-center py-6 text-muted-foreground">
+                    <Trophy className="w-10 h-10 mx-auto mb-2 opacity-50" data-testid="icon-achievements" />
+                    <p className="text-sm">No achievements yet.</p>
+                    <p className="text-xs">Keep practicing to unlock badges!</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {achievements.slice(0, 3).map((achievement: any) => (
+                      <div
+                        key={achievement.id}
+                        className="flex items-center gap-3 p-3 rounded-lg bg-primary/5 hover-elevate"
+                        data-testid={`achievement-${achievement.id}`}
+                      >
+                        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-chart-3/20 to-chart-3/10 flex items-center justify-center">
+                          <Trophy className="w-5 h-5 text-chart-3" data-testid="icon-achievements" />
                         </div>
-                        <div className="text-xs text-muted-foreground">
-                          {new Date(achievement.unlockedAt).toLocaleDateString()}
+                        <div className="flex-1 min-w-0">
+                          <div className="font-semibold text-sm truncate">
+                            {achievement.achievement?.name || "Achievement"}
+                          </div>
+                          <div className="text-xs text-muted-foreground">
+                            {new Date(achievement.unlockedAt).toLocaleDateString()}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-              
-              {achievements.length > 3 && (
-                <Link href="/progress">
-                  <Button variant="outline" className="w-full mt-4" size="sm" data-testid="button-view-all-achievements">
-                    View All Achievements
+                    ))}
+                  </div>
+                )}
+                
+                {achievements.length > 3 && (
+                  <Link href="/progress">
+                    <Button variant="outline" className="w-full mt-4" size="sm" data-testid="button-view-all-achievements">
+                      View All Achievements
+                    </Button>
+                  </Link>
+                )}
+
+                {!pet && user?.role === "student" && (
+                  <Button
+                    variant="outline"
+                    className="w-full mt-4"
+                    onClick={() => setPetSelectorOpen(true)}
+                    data-testid="button-adopt-pet"
+                  >
+                    Adopt a Learning Pet
                   </Button>
-                </Link>
-              )}
-            </CardContent>
-          </Card>
+                )}
+              </CardContent>
+            </Card>
+          )}
         </motion.div>
       </motion.div>
+
+      {/* Pet Selector Dialog */}
+      <PetSelector
+        open={petSelectorOpen}
+        onClose={() => setPetSelectorOpen(false)}
+      />
     </div>
   );
 }
