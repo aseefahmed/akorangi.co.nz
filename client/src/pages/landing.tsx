@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState } from "react";
+import logoImage from "@assets/generated_images/AkoRangi_educational_logo_design_8d5c3a98.png";
 
 export default function Landing() {
   const [hoveredCard, setHoveredCard] = useState<number | null>(null);
@@ -101,7 +102,15 @@ export default function Landing() {
           initial="hidden"
           animate="visible"
         >
-          <motion.div variants={itemVariants} className="mb-6">
+          <motion.div variants={itemVariants} className="mb-6 flex flex-col items-center">
+            {/* Logo */}
+            <motion.img
+              src={logoImage}
+              alt="AkoRangi Logo"
+              className="w-32 h-32 sm:w-40 sm:h-40 mb-6 drop-shadow-2xl"
+              whileHover={{ scale: 1.1, rotate: [0, -5, 5, 0] }}
+              transition={{ duration: 0.5 }}
+            />
             <motion.div
               className="inline-flex items-center gap-2 bg-gradient-to-r from-primary/30 via-accent/30 to-chart-3/30 px-6 py-3 rounded-full mb-6 border-2 border-primary/40 shadow-xl backdrop-blur-sm"
               whileHover={{ scale: 1.08 }}
@@ -117,7 +126,7 @@ export default function Landing() {
             variants={itemVariants}
             className="text-5xl sm:text-6xl lg:text-8xl font-bold mb-6 bg-gradient-to-r from-primary via-accent to-chart-3 bg-clip-text text-transparent leading-tight"
           >
-            SmartLearn NZ
+            AkoRangi
           </motion.h1>
           
           <motion.p
