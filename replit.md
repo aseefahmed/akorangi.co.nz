@@ -2,11 +2,21 @@
 
 ## Overview
 
-SmartLearn NZ is an AI-powered educational platform designed for New Zealand children (Years 1-8). The application provides personalized practice questions for mathematics and English, aligned with the New Zealand curriculum. It features gamification elements including points, achievements, streaks, and real-time feedback to make learning engaging and fun for children.
+SmartLearn NZ is an AI-powered educational platform designed for New Zealand children (Years 1-8). The application provides personalized practice questions for mathematics and English, aligned with the New Zealand curriculum. It features gamification elements including points, achievements, streaks, virtual pet companions, and real-time feedback to make learning engaging and fun for children.
 
 The platform uses OpenAI's GPT-5 model to dynamically generate curriculum-aligned questions, providing adaptive learning experiences that automatically adjust difficulty based on student performance (85%+ accuracy increases difficulty, 40% or less decreases difficulty).
 
 Parents and teachers can monitor student progress through dedicated dashboards showing subject-specific statistics, accuracy trends, and adaptive difficulty levels.
+
+### Virtual Pet System
+
+Students can adopt and care for virtual companion pets that grow alongside their learning journey. The pet system includes:
+
+- **Pet Types**: 6 adorable options (cat, dog, dragon, robot, owl, fox)
+- **Growth Mechanics**: Pets gain 1 experience point per practice point earned; fixed 100 EXP requirement per level with multi-level progression support
+- **Care System**: Feeding costs 10 points and increases happiness (+10) while decreasing hunger (-20)
+- **Visual Feedback**: Pet stats displayed with colorful progress bars showing level, experience, happiness, and hunger
+- **Engagement**: New users are prompted to adopt a pet upon first login, creating an immediate emotional connection to the platform
 
 ## User Preferences
 
@@ -74,6 +84,7 @@ Preferred communication style: Simple, everyday language.
 - **sessionQuestions**: Individual questions within sessions with answers and feedback
 - **achievements**: Predefined achievement definitions (badges, milestones)
 - **userAchievements**: Many-to-many relationship tracking unlocked achievements
+- **pets**: Virtual companion pets with types (cat/dog/dragon/robot/owl/fox), levels, experience points, happiness, and hunger stats
 - **sessions**: Server-side session storage for Replit Auth
 
 **Key Design Decisions**
@@ -83,6 +94,7 @@ Preferred communication style: Simple, everyday language.
 - Role-based access with student/parent/teacher differentiation
 - Student-supervisor linking system with approval workflow for data privacy
 - Adaptive difficulty system tracks per-subject difficulty levels (easy/medium/hard) and recent accuracy percentages
+- Virtual pet system with fixed 100 EXP per level progression and multi-level support
 
 ### Authentication & Authorization
 
