@@ -76,8 +76,8 @@ export function PetCard({ pet, userPoints }: PetCardProps) {
   const hunger = pet.hunger ?? 0;
   const level = pet.level ?? 1;
   const experience = pet.experience ?? 0;
-  const experienceToNextLevel = level * 100;
-  const experienceProgress = (experience / experienceToNextLevel) * 100;
+  const EXP_PER_LEVEL = 100; // Fixed 100 EXP per level
+  const experienceProgress = (experience / EXP_PER_LEVEL) * 100;
 
   const getMoodEmoji = () => {
     if (happiness > 80) return "😊";
@@ -177,7 +177,7 @@ export function PetCard({ pet, userPoints }: PetCardProps) {
                 Experience
               </span>
               <span className="text-xs text-muted-foreground" data-testid="text-pet-experience">
-                {experience}/{experienceToNextLevel}
+                {experience}/{EXP_PER_LEVEL}
               </span>
             </div>
             <Progress value={experienceProgress} className="h-2" />

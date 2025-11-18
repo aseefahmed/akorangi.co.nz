@@ -148,6 +148,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Check for achievements
         await storage.checkAndUnlockAchievements(userId);
 
+        // Update pet experience if user has a pet
+        const pet = await storage.getUserPet(userId);
+        if (pet && session.pointsEarned) {
+          const experienceGained = session.pointsEarned; // 1 point = 1 experience
+          let remainingExp = (pet.experience || 0) + experienceGained;
+          let currentLevel = pet.level || 1;
+          const EXP_PER_LEVEL = 100; // Fixed 100 EXP per level
+
+          // Handle multiple level-ups with a loop
+          while (remainingExp >= EXP_PER_LEVEL) {
+            currentLevel += 1;
+            remainingExp -= EXP_PER_LEVEL;
+          }
+            
+          await storage.updatePet(pet.id, {
+            level: currentLevel,
+            experience: remainingExp,
+          });
+        }
+
         res.json({ message: "Session completed successfully" });
       } catch (error) {
         console.error("Error completing session:", error);
