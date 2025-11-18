@@ -631,6 +631,157 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Story/Adventure routes
+  app.get("/api/stories", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const user = await storage.getUser(userId);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      const stories = await storage.getActiveStories();
+      const userProgress = await storage.getUserAllStoryProgress(userId);
+
+      // Enrich stories with user progress
+      const enrichedStories = stories.map(story => {
+        const progress = userProgress.find(p => p.storyId === story.id);
+        return {
+          ...story,
+          userProgress: progress || null,
+        };
+      });
+
+      res.json(enrichedStories);
+    } catch (error) {
+      console.error("Error fetching stories:", error);
+      res.status(500).json({ message: "Failed to fetch stories" });
+    }
+  });
+
+  app.get("/api/stories/:id", isAuthenticated, async (req: any, res) => {
+    try {
+      const { id } = req.params;
+      const userId = req.user.claims.sub;
+
+      const story = await storage.getStory(id);
+      if (!story) {
+        return res.status(404).json({ message: "Story not found" });
+      }
+
+      const chapters = await storage.getStoryChapters(id);
+      const progress = await storage.getUserStoryProgress(userId, id);
+
+      res.json({
+        ...story,
+        chapters,
+        userProgress: progress || null,
+      });
+    } catch (error) {
+      console.error("Error fetching story details:", error);
+      res.status(500).json({ message: "Failed to fetch story details" });
+    }
+  });
+
+  app.post("/api/stories/:storyId/start", isAuthenticated, async (req: any, res) => {
+    try {
+      const { storyId } = req.params;
+      const userId = req.user.claims.sub;
+
+      // Check if story exists
+      const story = await storage.getStory(storyId);
+      if (!story) {
+        return res.status(404).json({ message: "Story not found" });
+      }
+
+      // Check if user already has progress
+      const existingProgress = await storage.getUserStoryProgress(userId, storyId);
+      if (existingProgress) {
+        return res.json(existingProgress);
+      }
+
+      // Create new progress
+      const progress = await storage.createStoryProgress({
+        userId,
+        storyId,
+        currentChapter: 1,
+        completedChapters: [],
+        questionsCompleted: 0,
+        isCompleted: false,
+      });
+
+      res.json(progress);
+    } catch (error) {
+      console.error("Error starting story:", error);
+      res.status(500).json({ message: "Failed to start story" });
+    }
+  });
+
+  app.post("/api/stories/:storyId/chapters/:chapterNumber/complete", isAuthenticated, async (req: any, res) => {
+    try {
+      const { storyId, chapterNumber } = req.params;
+      const userId = req.user.claims.sub;
+
+      const chapter = (await storage.getStoryChapters(storyId)).find(
+        c => c.chapterNumber === parseInt(chapterNumber)
+      );
+      
+      if (!chapter) {
+        return res.status(404).json({ message: "Chapter not found" });
+      }
+
+      // Check if user has completed required questions
+      const progress = await storage.getUserStoryProgress(userId, storyId);
+      if (!progress) {
+        return res.status(400).json({ message: "Story not started" });
+      }
+
+      if ((progress.questionsCompleted || 0) < (chapter.requiredQuestions || 5)) {
+        return res.status(400).json({ 
+          message: "Not enough questions completed",
+          required: chapter.requiredQuestions,
+          completed: progress.questionsCompleted,
+        });
+      }
+
+      // Complete the chapter
+      const result = await storage.completeChapter(userId, storyId, parseInt(chapterNumber));
+
+      // Award bonus points for chapter completion
+      if (result.completed && chapter.rewardPoints) {
+        const user = await storage.getUser(userId);
+        if (user) {
+          await storage.updateUser(userId, {
+            totalPoints: (user.totalPoints || 0) + chapter.rewardPoints,
+          });
+        }
+      }
+
+      res.json({
+        ...result,
+        rewardPoints: chapter.rewardPoints,
+      });
+    } catch (error) {
+      console.error("Error completing chapter:", error);
+      res.status(500).json({ message: "Failed to complete chapter" });
+    }
+  });
+
+  app.post("/api/stories/:storyId/record-question", isAuthenticated, async (req: any, res) => {
+    try {
+      const { storyId } = req.params;
+      const userId = req.user.claims.sub;
+
+      await storage.recordStoryQuestion(userId, storyId);
+      const progress = await storage.getUserStoryProgress(userId, storyId);
+
+      res.json(progress);
+    } catch (error) {
+      console.error("Error recording story question:", error);
+      res.status(500).json({ message: "Failed to record question" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
