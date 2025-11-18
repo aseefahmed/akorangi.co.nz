@@ -54,9 +54,15 @@ type AnswerResult = {
 
 export default function Practice() {
   const { subject } = useParams();
-  const [, navigate] = useLocation();
+  const [location, navigate] = useLocation();
   const { user, isAuthenticated, isLoading: authLoading } = useAuth();
   const { toast } = useToast();
+
+  // Extract story context from URL query parameters (router-safe)
+  const urlParams = new URLSearchParams(location.split('?')[1] || '');
+  const storyId = urlParams.get('storyId');
+  const chapterId = urlParams.get('chapterId');
+  const isStoryMode = !!storyId && !!chapterId;
 
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
@@ -146,6 +152,16 @@ export default function Practice() {
     },
   });
 
+  const updateStoryProgressMutation = useMutation({
+    mutationFn: async () => {
+      if (!storyId) return;
+      await apiRequest("POST", `/api/stories/${storyId}/record-question`, {});
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/stories", storyId] });
+    },
+  });
+
   const submitAnswerMutation = useMutation({
     mutationFn: async () => {
       if (!currentQuestion || !sessionId) return;
@@ -167,6 +183,11 @@ export default function Practice() {
         setCorrectAnswers((prev) => prev + 1);
         const points = 10;
         setSessionPoints((prev) => prev + points);
+        
+        // Update story progress if in story mode
+        if (isStoryMode) {
+          updateStoryProgressMutation.mutate();
+        }
         
         confetti({
           particleCount: 100,
@@ -255,7 +276,11 @@ export default function Practice() {
   const handleNextQuestion = () => {
     if (questionsAnswered >= 5) {
       completeSessionMutation.mutate();
-      setTimeout(() => navigate("/dashboard"), 2000);
+      if (isStoryMode) {
+        setTimeout(() => navigate(`/stories/${storyId}`), 2000);
+      } else {
+        setTimeout(() => navigate("/dashboard"), 2000);
+      }
     } else {
       generateQuestionMutation.mutate();
     }
@@ -385,6 +410,32 @@ export default function Practice() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-primary/5 to-background py-8 px-4">
       <div className="max-w-4xl mx-auto space-y-6">
+        {/* Story Mode Banner */}
+        {isStoryMode && (
+          <Card className="border-accent/50 bg-gradient-to-r from-accent/10 to-primary/10">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <BookOpen className="w-6 h-6 text-accent" />
+                <div>
+                  <h3 className="font-semibold text-foreground">Story Adventure Mode</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Complete questions to progress through your adventure!
+                  </p>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => navigate(`/stories/${storyId}`)}
+                  className="ml-auto"
+                  data-testid="button-back-to-story"
+                >
+                  Back to Story
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Progress Header */}
         <Card className="border-primary/20">
           <CardContent className="p-6">

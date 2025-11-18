@@ -722,12 +722,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { storyId, chapterNumber } = req.params;
       const userId = req.user.claims.sub;
 
-      const chapter = (await storage.getStoryChapters(storyId)).find(
-        c => c.chapterNumber === parseInt(chapterNumber)
+      // Fetch all chapters for this story
+      const storyChapters = await storage.getStoryChapters(storyId);
+      if (!storyChapters || storyChapters.length === 0) {
+        return res.status(404).json({ message: "Story not found" });
+      }
+
+      // Find the specific chapter - since getStoryChapters filters by storyId,
+      // all chapters returned already belong to this story
+      const chapter = storyChapters.find(
+        c => c.chapterNumber === parseInt(chapterNumber) && c.storyId === storyId
       );
       
       if (!chapter) {
-        return res.status(404).json({ message: "Chapter not found" });
+        return res.status(404).json({ message: "Chapter not found or does not belong to this story" });
       }
 
       // Check if user has completed required questions
@@ -736,11 +744,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Story not started" });
       }
 
-      if ((progress.questionsCompleted || 0) < (chapter.requiredQuestions || 5)) {
+      const requiredQuestions = chapter.requiredQuestions || 5;
+      const completedQuestions = progress.questionsCompleted || 0;
+
+      if (completedQuestions < requiredQuestions) {
         return res.status(400).json({ 
           message: "Not enough questions completed",
-          required: chapter.requiredQuestions,
-          completed: progress.questionsCompleted,
+          required: requiredQuestions,
+          completed: completedQuestions,
         });
       }
 
@@ -754,6 +765,63 @@ export async function registerRoutes(app: Express): Promise<Server> {
           await storage.updateUser(userId, {
             totalPoints: (user.totalPoints || 0) + chapter.rewardPoints,
           });
+        }
+      }
+
+      // Award pet bonus experience for story completion
+      if (result.storyCompleted) {
+        const userPet = await storage.getUserPet(userId);
+        if (userPet) {
+          // Bonus 50 experience points for completing a full story
+          const bonusExp = 50;
+          let remainingExp = (userPet.experience || 0) + bonusExp;
+          let currentLevel = userPet.level || 1;
+          const EXP_PER_LEVEL = 100; // Fixed 100 EXP per level
+
+          // Handle multiple level-ups with a loop
+          while (remainingExp >= EXP_PER_LEVEL) {
+            currentLevel += 1;
+            remainingExp -= EXP_PER_LEVEL;
+          }
+            
+          await storage.updatePet(userPet.id, {
+            level: currentLevel,
+            experience: remainingExp,
+          });
+        }
+      }
+
+      // Check and unlock story achievements
+      const allAchievements = await storage.getAchievements();
+      const userAchievements = await storage.getUserAchievements(userId);
+      
+      // Story Starter: Complete first chapter
+      const storyStarterAchievement = allAchievements.find(a => a.name === "Story Starter");
+      if (storyStarterAchievement && !userAchievements.some(ua => ua.achievementId === storyStarterAchievement.id)) {
+        await storage.unlockAchievement(userId, storyStarterAchievement.id);
+      }
+
+      // Adventure Complete: Complete full story
+      if (result.storyCompleted) {
+        const adventureCompleteAchievement = allAchievements.find(a => a.name === "Adventure Complete");
+        if (adventureCompleteAchievement && !userAchievements.some(ua => ua.achievementId === adventureCompleteAchievement.id)) {
+          await storage.unlockAchievement(userId, adventureCompleteAchievement.id);
+        }
+
+        // Count completed stories for Master Explorer and Story Legend
+        const completedStoriesCount = await storage.getUserCompletedStoriesCount(userId);
+        const allStories = await storage.getActiveStories();
+
+        // Master Explorer: Complete 3 stories
+        const masterExplorerAchievement = allAchievements.find(a => a.name === "Master Explorer");
+        if (masterExplorerAchievement && completedStoriesCount >= 3 && !userAchievements.some(ua => ua.achievementId === masterExplorerAchievement.id)) {
+          await storage.unlockAchievement(userId, masterExplorerAchievement.id);
+        }
+
+        // Story Legend: Complete all stories
+        const storyLegendAchievement = allAchievements.find(a => a.name === "Story Legend");
+        if (storyLegendAchievement && completedStoriesCount >= allStories.length && !userAchievements.some(ua => ua.achievementId === storyLegendAchievement.id)) {
+          await storage.unlockAchievement(userId, storyLegendAchievement.id);
         }
       }
 

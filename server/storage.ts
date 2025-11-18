@@ -29,7 +29,7 @@ import {
   type InsertUserStoryProgress,
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, desc, and } from "drizzle-orm";
+import { eq, desc, and, sql } from "drizzle-orm";
 
 export interface IStorage {
   // User operations
@@ -92,6 +92,7 @@ export interface IStorage {
   updateStoryProgress(id: string, updates: Partial<UserStoryProgress>): Promise<void>;
   completeChapter(userId: string, storyId: string, chapterNumber: number): Promise<{ completed: boolean; storyCompleted: boolean }>;
   recordStoryQuestion(userId: string, storyId: string): Promise<void>; // Increment questions completed for current chapter
+  getUserCompletedStoriesCount(userId: string): Promise<number>; // Efficiently count completed stories for a user
 }
 
 export class DatabaseStorage implements IStorage {
@@ -550,6 +551,20 @@ export class DatabaseStorage implements IStorage {
     await this.updateStoryProgress(progress.id, {
       questionsCompleted: (progress.questionsCompleted || 0) + 1,
     });
+  }
+
+  async getUserCompletedStoriesCount(userId: string): Promise<number> {
+    const result = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(userStoryProgress)
+      .where(
+        and(
+          eq(userStoryProgress.userId, userId),
+          eq(userStoryProgress.isCompleted, true)
+        )
+      );
+    
+    return Number(result[0]?.count || 0);
   }
 }
 
