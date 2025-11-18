@@ -56,17 +56,91 @@ export function Header() {
 
   if (!isAuthenticated) {
     return (
-      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+      <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between gap-4">
           <Link href="/">
-            <div className="flex items-center gap-2 hover-elevate active-elevate-2 px-3 py-2 rounded-lg cursor-pointer">
-              <span className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+            <div className="flex items-center gap-2 hover-elevate active-elevate-2 px-3 py-2 rounded-lg cursor-pointer" data-testid="link-logo-landing">
+              <span className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
                 SmartLearn NZ
               </span>
             </div>
           </Link>
+
+          {/* Desktop Navigation for Landing Page */}
+          <div className="hidden md:flex items-center gap-2">
+            <NavigationMenu>
+              <NavigationMenuList>
+                <NavigationMenuItem>
+                  <NavigationMenuLink asChild>
+                    <a href="#features" className={navigationMenuTriggerStyle()} data-testid="nav-landing-features">
+                      Features
+                    </a>
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <NavigationMenuLink asChild>
+                    <a href="#how-it-works" className={navigationMenuTriggerStyle()} data-testid="nav-landing-how-it-works">
+                      How It Works
+                    </a>
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <NavigationMenuLink asChild>
+                    <a href="#subjects" className={navigationMenuTriggerStyle()} data-testid="nav-landing-subjects">
+                      Subjects
+                    </a>
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+              </NavigationMenuList>
+            </NavigationMenu>
+            
+            <Button asChild className="ml-2" data-testid="button-landing-login">
+              <a href="/api/login">
+                <User className="w-4 h-4 mr-2" />
+                Log In
+              </a>
+            </Button>
+          </div>
+
+          {/* Mobile Menu for Landing Page */}
           <div className="flex items-center gap-2">
             <ThemeToggle />
+            
+            <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+              <SheetTrigger asChild className="md:hidden">
+                <Button variant="ghost" size="icon" data-testid="button-mobile-menu-landing">
+                  <Menu className="w-5 h-5" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-80">
+                <SheetHeader>
+                  <SheetTitle>Menu</SheetTitle>
+                </SheetHeader>
+                <div className="mt-6 space-y-2">
+                  <Button variant="ghost" className="w-full justify-start" asChild onClick={() => setMobileMenuOpen(false)}>
+                    <a href="#features" data-testid="mobile-nav-landing-features">
+                      Features
+                    </a>
+                  </Button>
+                  <Button variant="ghost" className="w-full justify-start" asChild onClick={() => setMobileMenuOpen(false)}>
+                    <a href="#how-it-works" data-testid="mobile-nav-landing-how-it-works">
+                      How It Works
+                    </a>
+                  </Button>
+                  <Button variant="ghost" className="w-full justify-start" asChild onClick={() => setMobileMenuOpen(false)}>
+                    <a href="#subjects" data-testid="mobile-nav-landing-subjects">
+                      Subjects
+                    </a>
+                  </Button>
+                  <Button className="w-full mt-4" asChild data-testid="mobile-button-landing-login">
+                    <a href="/api/login">
+                      <User className="w-4 h-4 mr-2" />
+                      Log In
+                    </a>
+                  </Button>
+                </div>
+              </SheetContent>
+            </Sheet>
           </div>
         </div>
       </header>
