@@ -40,13 +40,21 @@ Preferred communication style: Simple, everyday language.
 - Gamification elements including confetti animations (canvas-confetti) for achievements
 
 **Navigation System**
-- Sticky header with mega menu dropdowns for Practice, Features, and Achievements
+- Sticky header with mega menu dropdowns for Practice, Features, Subjects, and Achievements
 - **Features Mega Menu**: Eye-catching showcase of platform capabilities organized into three themed columns
   - **Desktop**: 800px mega menu with gradient hero section, dual CTAs ("Try Practice Now", "Start a Story"), and three-column grid (Learn/Adventure/Grow) presenting all 7 core features
   - **Mobile**: Compact grouped section in hamburger menu with hero tagline and all 7 features as indented buttons
   - **Features Highlighted**: AI-Powered Questions, Adaptive Difficulty, NZ Curriculum, Story Mode, Virtual Pets, Points & Rewards, Progress Tracking
   - All interactive elements include data-testid attributes for automation testing
   - Uses Lucide icons throughout (no emojis)
+- **Subjects Mega Menu**: Comprehensive showcase of Math and English practice options
+  - **Desktop**: 700px mega menu with gradient hero section ("Master Math & English"), dual CTAs ("Practice Maths", "Practice English"), and two-column grid presenting 6 topic cards
+  - **Mobile**: Grouped section in hamburger menu with subject header and two subject buttons (Mathematics, English)
+  - **Mathematics Topics**: Addition & Subtraction, Multiplication & Division, Fractions & Decimals
+  - **English Topics**: Reading Comprehension, Vocabulary & Grammar, Spelling & Writing
+  - Anonymous users redirected to /api/login; authenticated users navigate to /practice/maths or /practice/english
+  - Comprehensive data-testid coverage for automation testing
+  - Uses Lucide icons (GraduationCap, Brain, Calculator, BookOpen, etc.) throughout
 - Mobile hamburger menu with responsive sheet component for smaller viewports
 - Breadcrumb navigation and contextual back buttons for story/practice flows
 
