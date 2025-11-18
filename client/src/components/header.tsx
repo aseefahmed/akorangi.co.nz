@@ -231,17 +231,147 @@ export function Header() {
                   </NavigationMenuContent>
                 </NavigationMenuItem>
 
+                {/* Subjects Mega Menu */}
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger className="text-base" data-testid="nav-landing-subjects-trigger">
+                    <GraduationCap className="w-4 h-4 mr-2" />
+                    Subjects
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <div className="w-[700px] p-6">
+                      {/* Hero Section */}
+                      <div className="mb-6 p-6 rounded-xl bg-gradient-to-r from-primary/10 via-accent/10 to-primary/5 border border-primary/20">
+                        <div className="flex items-start justify-between gap-4">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-2">
+                              <Brain className="w-6 h-6 text-primary" />
+                              <h3 className="text-lg font-bold">Master Math & English</h3>
+                            </div>
+                            <p className="text-sm text-muted-foreground mb-4">
+                              NZ curriculum-aligned practice for Years 1-8. Sign up to start learning!
+                            </p>
+                            <div className="flex gap-2">
+                              <Button size="sm" asChild data-testid="button-landing-subjects-hero-maths">
+                                <a href="/api/login">
+                                  <Calculator className="w-4 h-4 mr-2" />
+                                  Practice Maths
+                                  <ArrowRight className="w-4 h-4 ml-2" />
+                                </a>
+                              </Button>
+                              <Button variant="outline" size="sm" asChild data-testid="button-landing-subjects-hero-english">
+                                <a href="/api/login">
+                                  <BookOpen className="w-4 h-4 mr-2" />
+                                  Practice English
+                                </a>
+                              </Button>
+                            </div>
+                          </div>
+                          <div className="hidden md:flex w-24 h-24 rounded-full bg-gradient-to-br from-primary via-accent to-primary items-center justify-center">
+                            <BookOpen className="w-10 h-10 text-white" />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Two Column Subject Grid */}
+                      <div className="grid grid-cols-2 gap-6">
+                        {/* Mathematics Column */}
+                        <div className="space-y-3">
+                          <div className="flex items-center gap-2 mb-3">
+                            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center">
+                              <Brain className="w-5 h-5 text-white" />
+                            </div>
+                            <div>
+                              <h4 className="text-sm font-semibold">Mathematics</h4>
+                              <p className="text-xs text-muted-foreground">Numbers & problem solving</p>
+                            </div>
+                          </div>
+                          
+                          <div className="space-y-1">
+                            <div className="p-3 rounded-lg hover-elevate active-elevate-2 cursor-pointer" data-testid="landing-subject-card-addition">
+                              <div className="flex items-start gap-2">
+                                <Calculator className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                                <div>
+                                  <div className="text-sm font-medium">Addition & Subtraction</div>
+                                  <div className="text-xs text-muted-foreground">Build your number sense</div>
+                                </div>
+                              </div>
+                            </div>
+                            
+                            <div className="p-3 rounded-lg hover-elevate active-elevate-2 cursor-pointer" data-testid="landing-subject-card-multiplication">
+                              <div className="flex items-start gap-2">
+                                <Divide className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                                <div>
+                                  <div className="text-sm font-medium">Multiplication & Division</div>
+                                  <div className="text-xs text-muted-foreground">Master times tables</div>
+                                </div>
+                              </div>
+                            </div>
+                            
+                            <div className="p-3 rounded-lg hover-elevate active-elevate-2 cursor-pointer" data-testid="landing-subject-card-fractions">
+                              <div className="flex items-start gap-2">
+                                <Percent className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                                <div>
+                                  <div className="text-sm font-medium">Fractions & Decimals</div>
+                                  <div className="text-xs text-muted-foreground">Understand parts of numbers</div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* English Column */}
+                        <div className="space-y-3">
+                          <div className="flex items-center gap-2 mb-3">
+                            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-accent to-accent/70 flex items-center justify-center">
+                              <BookOpen className="w-5 h-5 text-white" />
+                            </div>
+                            <div>
+                              <h4 className="text-sm font-semibold">English</h4>
+                              <p className="text-xs text-muted-foreground">Reading & writing skills</p>
+                            </div>
+                          </div>
+                          
+                          <div className="space-y-1">
+                            <div className="p-3 rounded-lg hover-elevate active-elevate-2 cursor-pointer" data-testid="landing-subject-card-reading">
+                              <div className="flex items-start gap-2">
+                                <BookText className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
+                                <div>
+                                  <div className="text-sm font-medium">Reading Comprehension</div>
+                                  <div className="text-xs text-muted-foreground">Understand stories better</div>
+                                </div>
+                              </div>
+                            </div>
+                            
+                            <div className="p-3 rounded-lg hover-elevate active-elevate-2 cursor-pointer" data-testid="landing-subject-card-vocabulary">
+                              <div className="flex items-start gap-2">
+                                <PenTool className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
+                                <div>
+                                  <div className="text-sm font-medium">Vocabulary & Grammar</div>
+                                  <div className="text-xs text-muted-foreground">Learn new words</div>
+                                </div>
+                              </div>
+                            </div>
+                            
+                            <div className="p-3 rounded-lg hover-elevate active-elevate-2 cursor-pointer" data-testid="landing-subject-card-spelling">
+                              <div className="flex items-start gap-2">
+                                <SpellCheck className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
+                                <div>
+                                  <div className="text-sm font-medium">Spelling & Writing</div>
+                                  <div className="text-xs text-muted-foreground">Perfect your spelling</div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+
                 <NavigationMenuItem>
                   <NavigationMenuLink asChild>
                     <a href="#how-it-works" className={navigationMenuTriggerStyle()} data-testid="nav-landing-how-it-works">
                       How It Works
-                    </a>
-                  </NavigationMenuLink>
-                </NavigationMenuItem>
-                <NavigationMenuItem>
-                  <NavigationMenuLink asChild>
-                    <a href="#subjects" className={navigationMenuTriggerStyle()} data-testid="nav-landing-subjects">
-                      Subjects
                     </a>
                   </NavigationMenuLink>
                 </NavigationMenuItem>
@@ -314,14 +444,36 @@ export function Header() {
                     </div>
                   </div>
 
+                  {/* Subjects Section */}
+                  <div className="py-2">
+                    <div className="px-3 mb-2">
+                      <div className="flex items-center gap-2 mb-1">
+                        <GraduationCap className="w-4 h-4 text-primary" />
+                        <span className="text-sm font-semibold">Subjects</span>
+                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        Math & English practice
+                      </p>
+                    </div>
+                    <div className="space-y-1">
+                      <Button variant="ghost" size="sm" className="w-full justify-start pl-9" asChild onClick={() => setMobileMenuOpen(false)} data-testid="mobile-landing-subject-maths">
+                        <a href="/api/login">
+                          <Calculator className="w-3 h-3 mr-2" />
+                          Mathematics
+                        </a>
+                      </Button>
+                      <Button variant="ghost" size="sm" className="w-full justify-start pl-9" asChild onClick={() => setMobileMenuOpen(false)} data-testid="mobile-landing-subject-english">
+                        <a href="/api/login">
+                          <BookText className="w-3 h-3 mr-2" />
+                          English
+                        </a>
+                      </Button>
+                    </div>
+                  </div>
+
                   <Button variant="ghost" className="w-full justify-start" asChild onClick={() => setMobileMenuOpen(false)}>
                     <a href="#how-it-works" data-testid="mobile-nav-landing-how-it-works">
                       How It Works
-                    </a>
-                  </Button>
-                  <Button variant="ghost" className="w-full justify-start" asChild onClick={() => setMobileMenuOpen(false)}>
-                    <a href="#subjects" data-testid="mobile-nav-landing-subjects">
-                      Subjects
                     </a>
                   </Button>
                   <Button className="w-full mt-4" asChild data-testid="mobile-button-landing-login">
@@ -610,6 +762,155 @@ export function Header() {
                   </NavigationMenuContent>
                 </NavigationMenuItem>
 
+                {/* Subjects Mega Menu */}
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger className="text-base" data-testid="nav-subjects-trigger">
+                    <GraduationCap className="w-4 h-4 mr-2" />
+                    Subjects
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <div className="w-[700px] p-6">
+                      {/* Hero Section */}
+                      <div className="mb-6 p-6 rounded-xl bg-gradient-to-r from-primary/10 via-accent/10 to-primary/5 border border-primary/20">
+                        <div className="flex items-start justify-between gap-4">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-2">
+                              <Brain className="w-6 h-6 text-primary" />
+                              <h3 className="text-lg font-bold">Master Math & English</h3>
+                            </div>
+                            <p className="text-sm text-muted-foreground mb-4">
+                              NZ curriculum-aligned practice for Years 1-8. Choose your subject and start learning!
+                            </p>
+                            <div className="flex gap-2">
+                              <Link href="/practice/maths">
+                                <Button size="sm" data-testid="button-subjects-hero-maths">
+                                  <Calculator className="w-4 h-4 mr-2" />
+                                  Practice Maths
+                                  <ArrowRight className="w-4 h-4 ml-2" />
+                                </Button>
+                              </Link>
+                              <Link href="/practice/english">
+                                <Button variant="outline" size="sm" data-testid="button-subjects-hero-english">
+                                  <BookOpen className="w-4 h-4 mr-2" />
+                                  Practice English
+                                </Button>
+                              </Link>
+                            </div>
+                          </div>
+                          <div className="hidden md:flex w-24 h-24 rounded-full bg-gradient-to-br from-primary via-accent to-primary items-center justify-center">
+                            <BookOpen className="w-10 h-10 text-white" />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Two Column Subject Grid */}
+                      <div className="grid grid-cols-2 gap-6">
+                        {/* Mathematics Column */}
+                        <div className="space-y-3">
+                          <div className="flex items-center gap-2 mb-3">
+                            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center">
+                              <Brain className="w-5 h-5 text-white" />
+                            </div>
+                            <div>
+                              <h4 className="text-sm font-semibold">Mathematics</h4>
+                              <p className="text-xs text-muted-foreground">Numbers & problem solving</p>
+                            </div>
+                          </div>
+                          
+                          <div className="space-y-1">
+                            <Link href="/practice/maths">
+                              <div className="p-3 rounded-lg hover-elevate active-elevate-2 cursor-pointer" data-testid="subject-card-addition">
+                                <div className="flex items-start gap-2">
+                                  <Calculator className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                                  <div>
+                                    <div className="text-sm font-medium">Addition & Subtraction</div>
+                                    <div className="text-xs text-muted-foreground">Build your number sense</div>
+                                  </div>
+                                </div>
+                              </div>
+                            </Link>
+                            
+                            <Link href="/practice/maths">
+                              <div className="p-3 rounded-lg hover-elevate active-elevate-2 cursor-pointer" data-testid="subject-card-multiplication">
+                                <div className="flex items-start gap-2">
+                                  <Divide className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                                  <div>
+                                    <div className="text-sm font-medium">Multiplication & Division</div>
+                                    <div className="text-xs text-muted-foreground">Master times tables</div>
+                                  </div>
+                                </div>
+                              </div>
+                            </Link>
+                            
+                            <Link href="/practice/maths">
+                              <div className="p-3 rounded-lg hover-elevate active-elevate-2 cursor-pointer" data-testid="subject-card-fractions">
+                                <div className="flex items-start gap-2">
+                                  <Percent className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                                  <div>
+                                    <div className="text-sm font-medium">Fractions & Decimals</div>
+                                    <div className="text-xs text-muted-foreground">Understand parts of numbers</div>
+                                  </div>
+                                </div>
+                              </div>
+                            </Link>
+                          </div>
+                        </div>
+
+                        {/* English Column */}
+                        <div className="space-y-3">
+                          <div className="flex items-center gap-2 mb-3">
+                            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-accent to-accent/70 flex items-center justify-center">
+                              <BookOpen className="w-5 h-5 text-white" />
+                            </div>
+                            <div>
+                              <h4 className="text-sm font-semibold">English</h4>
+                              <p className="text-xs text-muted-foreground">Reading & writing skills</p>
+                            </div>
+                          </div>
+                          
+                          <div className="space-y-1">
+                            <Link href="/practice/english">
+                              <div className="p-3 rounded-lg hover-elevate active-elevate-2 cursor-pointer" data-testid="subject-card-reading">
+                                <div className="flex items-start gap-2">
+                                  <BookText className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
+                                  <div>
+                                    <div className="text-sm font-medium">Reading Comprehension</div>
+                                    <div className="text-xs text-muted-foreground">Understand stories better</div>
+                                  </div>
+                                </div>
+                              </div>
+                            </Link>
+                            
+                            <Link href="/practice/english">
+                              <div className="p-3 rounded-lg hover-elevate active-elevate-2 cursor-pointer" data-testid="subject-card-vocabulary">
+                                <div className="flex items-start gap-2">
+                                  <PenTool className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
+                                  <div>
+                                    <div className="text-sm font-medium">Vocabulary & Grammar</div>
+                                    <div className="text-xs text-muted-foreground">Learn new words</div>
+                                  </div>
+                                </div>
+                              </div>
+                            </Link>
+                            
+                            <Link href="/practice/english">
+                              <div className="p-3 rounded-lg hover-elevate active-elevate-2 cursor-pointer" data-testid="subject-card-spelling">
+                                <div className="flex items-start gap-2">
+                                  <SpellCheck className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
+                                  <div>
+                                    <div className="text-sm font-medium">Spelling & Writing</div>
+                                    <div className="text-xs text-muted-foreground">Perfect your spelling</div>
+                                  </div>
+                                </div>
+                              </div>
+                            </Link>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+
                 {/* Progress */}
                 <NavigationMenuItem>
                   <NavigationMenuLink asChild>
@@ -791,18 +1092,32 @@ export function Header() {
                       </div>
                     </div>
 
-                    <Link href="/practice/maths">
-                      <Button variant="ghost" className="w-full justify-start" onClick={() => setMobileMenuOpen(false)} data-testid="mobile-nav-maths">
-                        <Brain className="w-4 h-4 mr-2" />
-                        Maths Practice
-                      </Button>
-                    </Link>
-                    <Link href="/practice/english">
-                      <Button variant="ghost" className="w-full justify-start" onClick={() => setMobileMenuOpen(false)} data-testid="mobile-nav-english">
-                        <BookOpen className="w-4 h-4 mr-2" />
-                        English Practice
-                      </Button>
-                    </Link>
+                    {/* Subjects Section */}
+                    <div className="py-2">
+                      <div className="px-3 mb-2">
+                        <div className="flex items-center gap-2 mb-1">
+                          <GraduationCap className="w-4 h-4 text-primary" />
+                          <span className="text-sm font-semibold">Subjects</span>
+                        </div>
+                        <p className="text-xs text-muted-foreground">
+                          Math & English practice
+                        </p>
+                      </div>
+                      <div className="space-y-1">
+                        <Link href="/practice/maths">
+                          <Button variant="ghost" size="sm" className="w-full justify-start pl-9" onClick={() => setMobileMenuOpen(false)} data-testid="mobile-subject-maths">
+                            <Calculator className="w-3 h-3 mr-2" />
+                            Mathematics
+                          </Button>
+                        </Link>
+                        <Link href="/practice/english">
+                          <Button variant="ghost" size="sm" className="w-full justify-start pl-9" onClick={() => setMobileMenuOpen(false)} data-testid="mobile-subject-english">
+                            <BookText className="w-3 h-3 mr-2" />
+                            English
+                          </Button>
+                        </Link>
+                      </div>
+                    </div>
                     <Link href="/progress">
                       <Button variant="ghost" className="w-full justify-start" onClick={() => setMobileMenuOpen(false)} data-testid="mobile-nav-progress">
                         <TrendingUp className="w-4 h-4 mr-2" />
