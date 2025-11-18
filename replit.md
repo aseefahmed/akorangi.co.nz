@@ -39,6 +39,19 @@ Preferred communication style: Simple, everyday language.
 - Custom color palette optimized for educational content with light/dark theme support
 - Gamification elements including confetti animations (canvas-confetti) for achievements
 
+**Landing Page Design**
+- Vibrant, child-friendly design with animated gradient backgrounds and interactive hover effects
+- **Hero Section**: Enhanced with 3 animated gradient orbs, AI-powered badge, dual CTAs, and 4 floating stat cards (5000+ Questions, 50+ Achievements, 6 Virtual Pets, 100% NZ Curriculum)
+- **How It Works**: 3-step visual guide (Sign Up & Choose, Practice & Learn, Grow & Achieve) with numbered badges and rotating animations
+- **Features Showcase**: 6 comprehensive feature cards highlighting AI-Powered Questions, Adaptive Difficulty, Instant Feedback, Points & Achievements, Streaks & Motivation, and Story Mode
+- **Virtual Pets Section**: Displays all 6 pet options (Cat, Dog, Dragon, Robot, Owl, Fox) using Lucide icons with hover animations and benefits explanation (Feed, Level Up, Unlock Rewards)
+- **Subjects Display**: Enhanced Mathematics and English cards with detailed topic lists and checkmarks
+- **Parents & Teachers**: Dedicated section highlighting Detailed Analytics, Multi-Student Dashboard, and Security features
+- **100% Free**: Prominent messaging emphasizing no subscriptions, fees, or credit cards required
+- All sections use framer-motion for scroll animations and comprehensive data-testid coverage for testing
+- Strict adherence to no-emoji policy - all visuals use Lucide React icon components
+- All Tailwind classes statically defined (no dynamic interpolation) for proper compilation
+
 **Navigation System**
 - Sticky header with mega menu dropdowns for Practice, Features, Subjects, and Achievements
 - **Features Mega Menu**: Eye-catching showcase of platform capabilities organized into three themed columns
