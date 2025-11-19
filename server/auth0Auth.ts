@@ -130,12 +130,16 @@ export async function setupAuth(app: Express) {
     try {
       const host = req.get("host")!;
       const sanitizedProtocol = sanitizeProtocol(req.protocol);
+      console.log(`[Auth0] Login attempt - Host: ${host}, Protocol: ${sanitizedProtocol}`);
+      console.log(`[Auth0] Allowed hosts:`, getAllowedHosts());
+      console.log(`[Auth0] Is allowed:`, isAllowedHost(host));
       ensureStrategy(sanitizedProtocol, host);
       const strategyKey = `${sanitizedProtocol}://${host}`;
       passport.authenticate(`auth0:${strategyKey}`, {
         scope: "openid email profile",
       })(req, res, next);
     } catch (error) {
+      console.error(`[Auth0] Login error:`, error);
       res.status(400).json({ message: 'Invalid host or protocol' });
     }
   });
