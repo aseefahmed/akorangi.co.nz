@@ -46,8 +46,13 @@ function getAllowedHosts(): string[] {
   
   if (process.env.REPL_SLUG) {
     allowedHosts.push(`${process.env.REPL_SLUG}.${process.env.REPL_OWNER}.repl.co`);
+  }
+  
+  if (process.env.REPL_ID) {
     allowedHosts.push(`${process.env.REPL_ID}.id.repl.co`);
   }
+  
+  allowedHosts.push('replit.dev');
   
   if (process.env.NODE_ENV === 'development') {
     allowedHosts.push('localhost:5000');
