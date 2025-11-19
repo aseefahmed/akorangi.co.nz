@@ -1,10 +1,36 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { 
-  BookOpen, Brain, Star, Trophy, Sparkles, Zap, Target, Flame, Rocket,
-  Bot, TrendingUp, GraduationCap, Heart, Users, BarChart, CheckCircle, Shield,
-  Smile, BookText, Calculator, Activity, Gift, Crown, Cat, Dog, Rabbit, Fish, Bird, Squirrel
+import {
+  BookOpen,
+  Brain,
+  Star,
+  Trophy,
+  Sparkles,
+  Zap,
+  Target,
+  Flame,
+  Rocket,
+  Bot,
+  TrendingUp,
+  GraduationCap,
+  Heart,
+  Users,
+  BarChart,
+  CheckCircle,
+  Shield,
+  Smile,
+  BookText,
+  Calculator,
+  Activity,
+  Gift,
+  Crown,
+  Cat,
+  Dog,
+  Rabbit,
+  Fish,
+  Bird,
+  Squirrel,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState } from "react";
@@ -21,8 +47,8 @@ export default function Landing() {
       transition: {
         staggerChildren: 0.1,
         delayChildren: 0.05,
-      }
-    }
+      },
+    },
   };
 
   const itemVariants = {
@@ -34,8 +60,8 @@ export default function Landing() {
         type: "spring",
         stiffness: 100,
         damping: 12,
-      }
-    }
+      },
+    },
   };
 
   const floatVariants = {
@@ -44,9 +70,9 @@ export default function Landing() {
       transition: {
         duration: 3,
         repeat: Infinity,
-        ease: "easeInOut"
-      }
-    }
+        ease: "easeInOut",
+      },
+    },
   };
 
   return (
@@ -63,7 +89,7 @@ export default function Landing() {
           transition={{
             duration: 8,
             repeat: Infinity,
-            ease: "easeInOut"
+            ease: "easeInOut",
           }}
         />
         <motion.div
@@ -76,7 +102,7 @@ export default function Landing() {
           transition={{
             duration: 10,
             repeat: Infinity,
-            ease: "easeInOut"
+            ease: "easeInOut",
           }}
         />
         <motion.div
@@ -89,7 +115,7 @@ export default function Landing() {
           transition={{
             duration: 9,
             repeat: Infinity,
-            ease: "easeInOut"
+            ease: "easeInOut",
           }}
         />
       </div>
@@ -102,26 +128,23 @@ export default function Landing() {
           initial="hidden"
           animate="visible"
         >
-          <motion.div variants={itemVariants} className="mb-6 flex flex-col items-center">
-            {/* Logo */}
-            <motion.img
-              src={logoImage}
-              alt="AkoRangi Logo"
-              className="w-32 h-32 sm:w-40 sm:h-40 mb-6 drop-shadow-2xl"
-              whileHover={{ scale: 1.1, rotate: [0, -5, 5, 0] }}
-              transition={{ duration: 0.5 }}
-            />
+          <motion.div
+            variants={itemVariants}
+            className="mb-6 flex flex-col items-center"
+          >
             <motion.div
               className="inline-flex items-center gap-2 bg-gradient-to-r from-primary/30 via-accent/30 to-chart-3/30 px-6 py-3 rounded-full mb-6 border-2 border-primary/40 shadow-xl backdrop-blur-sm"
               whileHover={{ scale: 1.08 }}
               whileTap={{ scale: 0.95 }}
             >
               <Sparkles className="w-5 h-5 text-primary animate-pulse" />
-              <span className="text-sm font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">AI-Powered Learning Magic for Kiwi Kids</span>
+              <span className="text-sm font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                AI-Powered Learning Magic for Kiwi Kids
+              </span>
               <Sparkles className="w-5 h-5 text-accent animate-pulse" />
             </motion.div>
           </motion.div>
-          
+
           <motion.h1
             variants={itemVariants}
             className="text-5xl sm:text-6xl lg:text-8xl font-bold mb-6 bg-gradient-to-r from-primary via-accent to-chart-3 bg-clip-text text-transparent leading-tight"
@@ -129,22 +152,23 @@ export default function Landing() {
           >
             AkoRangi
           </motion.h1>
-          
+
           <motion.p
             variants={itemVariants}
             className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground mb-4 max-w-3xl mx-auto"
           >
             Where Learning Becomes an Adventure!
           </motion.p>
-          
+
           <motion.p
             variants={itemVariants}
             className="text-lg sm:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed"
           >
-            Join thousands of Kiwi kids mastering maths and English through personalized practice, 
-            AI feedback, virtual pets, and exciting achievements. Built for Years 1-8!
+            Join thousands of Kiwi kids mastering maths and English through
+            personalized practice, AI feedback, virtual pets, and exciting
+            achievements. Built for Years 1-8!
           </motion.p>
-          
+
           <motion.div
             variants={itemVariants}
             className="flex flex-wrap gap-4 justify-center mb-12"
@@ -156,7 +180,7 @@ export default function Landing() {
               <Button
                 size="lg"
                 className="text-lg text-white shadow-2xl bg-gradient-to-r from-primary to-accent"
-                onClick={() => window.location.href = "/api/login"}
+                onClick={() => (window.location.href = "/api/login")}
                 data-testid="button-start-learning"
               >
                 <Rocket className="w-6 h-6 mr-2" />
@@ -164,16 +188,13 @@ export default function Landing() {
                 <Sparkles className="w-5 h-5 ml-2" />
               </Button>
             </motion.div>
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Button
                 size="lg"
                 variant="outline"
                 className="text-lg bg-background/90 backdrop-blur-sm shadow-xl border-2 border-primary/40"
                 data-testid="button-parent-login"
-                onClick={() => window.location.href = "/api/login"}
+                onClick={() => (window.location.href = "/api/login")}
               >
                 <Users className="w-6 h-6 mr-2" />
                 Parent/Teacher Login
@@ -192,8 +213,12 @@ export default function Landing() {
               className="bg-gradient-to-br from-primary/30 to-primary/10 border-2 border-primary/40 rounded-2xl p-4 sm:p-6 shadow-xl hover-elevate active-elevate-2"
             >
               <Star className="w-10 h-10 sm:w-12 sm:h-12 text-primary mx-auto mb-2 fill-primary" />
-              <div className="text-3xl sm:text-4xl font-bold text-primary">5000+</div>
-              <div className="text-xs sm:text-sm text-muted-foreground font-semibold">AI Questions</div>
+              <div className="text-3xl sm:text-4xl font-bold text-primary">
+                5000+
+              </div>
+              <div className="text-xs sm:text-sm text-muted-foreground font-semibold">
+                AI Questions
+              </div>
             </motion.div>
             <motion.div
               variants={floatVariants}
@@ -202,8 +227,12 @@ export default function Landing() {
               className="bg-gradient-to-br from-accent/30 to-accent/10 border-2 border-accent/40 rounded-2xl p-4 sm:p-6 shadow-xl hover-elevate active-elevate-2"
             >
               <Trophy className="w-10 h-10 sm:w-12 sm:h-12 text-accent mx-auto mb-2 fill-accent" />
-              <div className="text-3xl sm:text-4xl font-bold text-accent">50+</div>
-              <div className="text-xs sm:text-sm text-muted-foreground font-semibold">Achievements</div>
+              <div className="text-3xl sm:text-4xl font-bold text-accent">
+                50+
+              </div>
+              <div className="text-xs sm:text-sm text-muted-foreground font-semibold">
+                Achievements
+              </div>
             </motion.div>
             <motion.div
               variants={floatVariants}
@@ -212,8 +241,12 @@ export default function Landing() {
               className="bg-gradient-to-br from-chart-3/30 to-chart-3/10 border-2 border-chart-3/40 rounded-2xl p-4 sm:p-6 shadow-xl hover-elevate active-elevate-2"
             >
               <Heart className="w-10 h-10 sm:w-12 sm:h-12 text-chart-3 mx-auto mb-2 fill-chart-3" />
-              <div className="text-3xl sm:text-4xl font-bold text-chart-3">6</div>
-              <div className="text-xs sm:text-sm text-muted-foreground font-semibold">Virtual Pets</div>
+              <div className="text-3xl sm:text-4xl font-bold text-chart-3">
+                6
+              </div>
+              <div className="text-xs sm:text-sm text-muted-foreground font-semibold">
+                Virtual Pets
+              </div>
             </motion.div>
             <motion.div
               variants={floatVariants}
@@ -222,15 +255,22 @@ export default function Landing() {
               className="bg-gradient-to-br from-chart-2/30 to-chart-2/10 border-2 border-chart-2/40 rounded-2xl p-4 sm:p-6 shadow-xl hover-elevate active-elevate-2"
             >
               <Brain className="w-10 h-10 sm:w-12 sm:h-12 text-chart-2 mx-auto mb-2" />
-              <div className="text-3xl sm:text-4xl font-bold text-chart-2">100%</div>
-              <div className="text-xs sm:text-sm text-muted-foreground font-semibold">NZ Curriculum</div>
+              <div className="text-3xl sm:text-4xl font-bold text-chart-2">
+                100%
+              </div>
+              <div className="text-xs sm:text-sm text-muted-foreground font-semibold">
+                NZ Curriculum
+              </div>
             </motion.div>
           </motion.div>
         </motion.div>
       </section>
 
       {/* How It Works Section */}
-      <section id="how-it-works" className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-muted/20 to-background relative">
+      <section
+        id="how-it-works"
+        className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-muted/20 to-background relative"
+      >
         <div className="max-w-6xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -238,7 +278,10 @@ export default function Landing() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <Badge className="mb-4 px-6 py-2 text-sm" data-testid="badge-how-it-works">
+            <Badge
+              className="mb-4 px-6 py-2 text-sm"
+              data-testid="badge-how-it-works"
+            >
               <CheckCircle className="w-4 h-4 mr-2" />
               Simple & Fun
             </Badge>
@@ -246,7 +289,8 @@ export default function Landing() {
               How It Works
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Get started in just 3 easy steps and watch your child's confidence soar!
+              Get started in just 3 easy steps and watch your child's confidence
+              soar!
             </p>
           </motion.div>
 
@@ -271,8 +315,13 @@ export default function Landing() {
                   <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center">
                     <Rocket className="w-8 h-8 text-primary" />
                   </div>
-                  <h3 className="text-2xl font-bold mb-3 text-primary">Sign Up & Choose</h3>
-                  <p className="text-muted-foreground leading-relaxed">Create your free account, select your year level, and pick your favorite virtual pet companion!</p>
+                  <h3 className="text-2xl font-bold mb-3 text-primary">
+                    Sign Up & Choose
+                  </h3>
+                  <p className="text-muted-foreground leading-relaxed">
+                    Create your free account, select your year level, and pick
+                    your favorite virtual pet companion!
+                  </p>
                 </CardContent>
               </Card>
             </motion.div>
@@ -297,8 +346,13 @@ export default function Landing() {
                   <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-accent/20 to-accent/10 flex items-center justify-center">
                     <Brain className="w-8 h-8 text-accent" />
                   </div>
-                  <h3 className="text-2xl font-bold mb-3 text-accent">Practice & Learn</h3>
-                  <p className="text-muted-foreground leading-relaxed">Answer AI-generated questions in maths or English. Get instant feedback and earn points for every question!</p>
+                  <h3 className="text-2xl font-bold mb-3 text-accent">
+                    Practice & Learn
+                  </h3>
+                  <p className="text-muted-foreground leading-relaxed">
+                    Answer AI-generated questions in maths or English. Get
+                    instant feedback and earn points for every question!
+                  </p>
                 </CardContent>
               </Card>
             </motion.div>
@@ -323,8 +377,13 @@ export default function Landing() {
                   <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-chart-3/20 to-chart-3/10 flex items-center justify-center">
                     <Trophy className="w-8 h-8 text-chart-3" />
                   </div>
-                  <h3 className="text-2xl font-bold mb-3 text-chart-3">Grow & Achieve</h3>
-                  <p className="text-muted-foreground leading-relaxed">Level up your pet, unlock achievements, build streaks, and become a learning superstar!</p>
+                  <h3 className="text-2xl font-bold mb-3 text-chart-3">
+                    Grow & Achieve
+                  </h3>
+                  <p className="text-muted-foreground leading-relaxed">
+                    Level up your pet, unlock achievements, build streaks, and
+                    become a learning superstar!
+                  </p>
                 </CardContent>
               </Card>
             </motion.div>
@@ -341,7 +400,10 @@ export default function Landing() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <Badge className="mb-4 px-6 py-2 text-sm" data-testid="badge-features">
+            <Badge
+              className="mb-4 px-6 py-2 text-sm"
+              data-testid="badge-features"
+            >
               <Sparkles className="w-4 h-4 mr-2" />
               Powerful Features
             </Badge>
@@ -349,10 +411,11 @@ export default function Landing() {
               Why Kids Love AkoRangi
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Everything your child needs to excel in maths and English, all in one fun platform!
+              Everything your child needs to excel in maths and English, all in
+              one fun platform!
             </p>
           </motion.div>
-          
+
           <div className="grid md:grid-cols-3 gap-6 mb-6">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -368,14 +431,22 @@ export default function Landing() {
                 <CardContent className="p-6 relative z-10">
                   <motion.div
                     className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/10 border border-primary/30 flex items-center justify-center mb-4"
-                    animate={hoveredCard === 0 ? { rotate: [0, -10, 10, 0], scale: 1.1 } : {}}
+                    animate={
+                      hoveredCard === 0
+                        ? { rotate: [0, -10, 10, 0], scale: 1.1 }
+                        : {}
+                    }
                     transition={{ duration: 0.5 }}
                   >
                     <Bot className="w-8 h-8 text-primary" />
                   </motion.div>
-                  <h3 className="text-xl font-bold mb-3 text-primary">AI-Powered Questions</h3>
+                  <h3 className="text-xl font-bold mb-3 text-primary">
+                    AI-Powered Questions
+                  </h3>
                   <p className="text-muted-foreground leading-relaxed">
-                    Unlimited practice questions generated by advanced AI, perfectly matched to your child's year level and the NZ curriculum!
+                    Unlimited practice questions generated by advanced AI,
+                    perfectly matched to your child's year level and the NZ
+                    curriculum!
                   </p>
                 </CardContent>
               </Card>
@@ -395,14 +466,22 @@ export default function Landing() {
                 <CardContent className="p-6 relative z-10">
                   <motion.div
                     className="w-16 h-16 rounded-2xl bg-gradient-to-br from-accent/20 to-accent/10 border border-accent/30 flex items-center justify-center mb-4"
-                    animate={hoveredCard === 1 ? { rotate: [0, -10, 10, 0], scale: 1.1 } : {}}
+                    animate={
+                      hoveredCard === 1
+                        ? { rotate: [0, -10, 10, 0], scale: 1.1 }
+                        : {}
+                    }
                     transition={{ duration: 0.5 }}
                   >
                     <TrendingUp className="w-8 h-8 text-accent" />
                   </motion.div>
-                  <h3 className="text-xl font-bold mb-3 text-accent">Adaptive Difficulty</h3>
+                  <h3 className="text-xl font-bold mb-3 text-accent">
+                    Adaptive Difficulty
+                  </h3>
                   <p className="text-muted-foreground leading-relaxed">
-                    Questions automatically adjust based on performance. Doing well? Level up! Need help? Get easier questions to build confidence!
+                    Questions automatically adjust based on performance. Doing
+                    well? Level up! Need help? Get easier questions to build
+                    confidence!
                   </p>
                 </CardContent>
               </Card>
@@ -422,14 +501,21 @@ export default function Landing() {
                 <CardContent className="p-6 relative z-10">
                   <motion.div
                     className="w-16 h-16 rounded-2xl bg-gradient-to-br from-chart-2/20 to-chart-2/10 border border-chart-2/30 flex items-center justify-center mb-4"
-                    animate={hoveredCard === 2 ? { rotate: [0, -10, 10, 0], scale: 1.1 } : {}}
+                    animate={
+                      hoveredCard === 2
+                        ? { rotate: [0, -10, 10, 0], scale: 1.1 }
+                        : {}
+                    }
                     transition={{ duration: 0.5 }}
                   >
                     <Zap className="w-8 h-8 text-chart-2" />
                   </motion.div>
-                  <h3 className="text-xl font-bold mb-3 text-chart-2">Instant Feedback</h3>
+                  <h3 className="text-xl font-bold mb-3 text-chart-2">
+                    Instant Feedback
+                  </h3>
                   <p className="text-muted-foreground leading-relaxed">
-                    Get encouraging AI feedback immediately after each answer. Learn from mistakes with helpful explanations!
+                    Get encouraging AI feedback immediately after each answer.
+                    Learn from mistakes with helpful explanations!
                   </p>
                 </CardContent>
               </Card>
@@ -449,14 +535,22 @@ export default function Landing() {
                 <CardContent className="p-6 relative z-10">
                   <motion.div
                     className="w-16 h-16 rounded-2xl bg-gradient-to-br from-chart-3/20 to-chart-3/10 border border-chart-3/30 flex items-center justify-center mb-4"
-                    animate={hoveredCard === 3 ? { rotate: [0, -10, 10, 0], scale: 1.1 } : {}}
+                    animate={
+                      hoveredCard === 3
+                        ? { rotate: [0, -10, 10, 0], scale: 1.1 }
+                        : {}
+                    }
                     transition={{ duration: 0.5 }}
                   >
                     <Trophy className="w-8 h-8 text-chart-3" />
                   </motion.div>
-                  <h3 className="text-xl font-bold mb-3 text-chart-3">Points & Achievements</h3>
+                  <h3 className="text-xl font-bold mb-3 text-chart-3">
+                    Points & Achievements
+                  </h3>
                   <p className="text-muted-foreground leading-relaxed">
-                    Earn points for every correct answer, unlock 50+ achievements, and celebrate your progress with confetti animations!
+                    Earn points for every correct answer, unlock 50+
+                    achievements, and celebrate your progress with confetti
+                    animations!
                   </p>
                 </CardContent>
               </Card>
@@ -476,14 +570,21 @@ export default function Landing() {
                 <CardContent className="p-6 relative z-10">
                   <motion.div
                     className="w-16 h-16 rounded-2xl bg-gradient-to-br from-destructive/20 to-destructive/10 border border-destructive/30 flex items-center justify-center mb-4"
-                    animate={hoveredCard === 4 ? { rotate: [0, -10, 10, 0], scale: 1.1 } : {}}
+                    animate={
+                      hoveredCard === 4
+                        ? { rotate: [0, -10, 10, 0], scale: 1.1 }
+                        : {}
+                    }
                     transition={{ duration: 0.5 }}
                   >
                     <Flame className="w-8 h-8 text-destructive" />
                   </motion.div>
-                  <h3 className="text-xl font-bold mb-3 text-destructive">Streaks & Motivation</h3>
+                  <h3 className="text-xl font-bold mb-3 text-destructive">
+                    Streaks & Motivation
+                  </h3>
                   <p className="text-muted-foreground leading-relaxed">
-                    Build daily streaks to stay motivated! The longer your streak, the more special rewards you unlock!
+                    Build daily streaks to stay motivated! The longer your
+                    streak, the more special rewards you unlock!
                   </p>
                 </CardContent>
               </Card>
@@ -503,14 +604,22 @@ export default function Landing() {
                 <CardContent className="p-6 relative z-10">
                   <motion.div
                     className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/10 border border-primary/30 flex items-center justify-center mb-4"
-                    animate={hoveredCard === 5 ? { rotate: [0, -10, 10, 0], scale: 1.1 } : {}}
+                    animate={
+                      hoveredCard === 5
+                        ? { rotate: [0, -10, 10, 0], scale: 1.1 }
+                        : {}
+                    }
                     transition={{ duration: 0.5 }}
                   >
                     <BookOpen className="w-8 h-8 text-primary" />
                   </motion.div>
-                  <h3 className="text-xl font-bold mb-3 text-primary">Story Mode</h3>
+                  <h3 className="text-xl font-bold mb-3 text-primary">
+                    Story Mode
+                  </h3>
                   <p className="text-muted-foreground leading-relaxed">
-                    Learn through interactive story adventures! Make choices, solve problems, and see how the story unfolds based on your answers!
+                    Learn through interactive story adventures! Make choices,
+                    solve problems, and see how the story unfolds based on your
+                    answers!
                   </p>
                 </CardContent>
               </Card>
@@ -528,7 +637,10 @@ export default function Landing() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <Badge className="mb-4 px-6 py-2 text-sm" data-testid="badge-virtual-pets">
+            <Badge
+              className="mb-4 px-6 py-2 text-sm"
+              data-testid="badge-virtual-pets"
+            >
               <Heart className="w-4 h-4 mr-2 fill-current" />
               Adorable Companions
             </Badge>
@@ -536,7 +648,8 @@ export default function Landing() {
               Meet Your Virtual Pet Friends
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Choose your favorite companion! Your pet grows as you learn, making every practice session more rewarding!
+              Choose your favorite companion! Your pet grows as you learn,
+              making every practice session more rewarding!
             </p>
           </motion.div>
 
@@ -547,7 +660,7 @@ export default function Landing() {
               { name: "Dragon", icon: Sparkles, colorClass: "text-purple-500" },
               { name: "Robot", icon: Bot, colorClass: "text-blue-500" },
               { name: "Owl", icon: Bird, colorClass: "text-indigo-500" },
-              { name: "Fox", icon: Squirrel, colorClass: "text-red-500" }
+              { name: "Fox", icon: Squirrel, colorClass: "text-red-500" },
             ].map((pet, index) => (
               <motion.div
                 key={index}
@@ -564,9 +677,14 @@ export default function Landing() {
                     <motion.div
                       className="mb-3"
                       animate={hoveredPet === index ? { y: [0, -10, 0] } : {}}
-                      transition={{ duration: 0.5, repeat: hoveredPet === index ? Infinity : 0 }}
+                      transition={{
+                        duration: 0.5,
+                        repeat: hoveredPet === index ? Infinity : 0,
+                      }}
                     >
-                      <pet.icon className={`w-16 h-16 mx-auto ${pet.colorClass}`} />
+                      <pet.icon
+                        className={`w-16 h-16 mx-auto ${pet.colorClass}`}
+                      />
                     </motion.div>
                     <div className="text-sm font-semibold">{pet.name}</div>
                   </CardContent>
@@ -585,17 +703,23 @@ export default function Landing() {
               <div>
                 <Gift className="w-12 h-12 text-primary mx-auto mb-3" />
                 <h4 className="font-bold text-lg mb-2">Feed Your Pet</h4>
-                <p className="text-sm text-muted-foreground">Use your earned points to keep your pet happy and healthy!</p>
+                <p className="text-sm text-muted-foreground">
+                  Use your earned points to keep your pet happy and healthy!
+                </p>
               </div>
               <div>
                 <Activity className="w-12 h-12 text-accent mx-auto mb-3" />
                 <h4 className="font-bold text-lg mb-2">Level Up Together</h4>
-                <p className="text-sm text-muted-foreground">Your pet gains experience as you practice and grows with you!</p>
+                <p className="text-sm text-muted-foreground">
+                  Your pet gains experience as you practice and grows with you!
+                </p>
               </div>
               <div>
                 <Crown className="w-12 h-12 text-chart-3 mx-auto mb-3 fill-chart-3" />
                 <h4 className="font-bold text-lg mb-2">Unlock Rewards</h4>
-                <p className="text-sm text-muted-foreground">Higher-level pets unlock exclusive achievements and bonuses!</p>
+                <p className="text-sm text-muted-foreground">
+                  Higher-level pets unlock exclusive achievements and bonuses!
+                </p>
               </div>
             </div>
           </motion.div>
@@ -611,7 +735,10 @@ export default function Landing() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <Badge className="mb-4 px-6 py-2 text-sm" data-testid="badge-subjects">
+            <Badge
+              className="mb-4 px-6 py-2 text-sm"
+              data-testid="badge-subjects"
+            >
               <GraduationCap className="w-4 h-4 mr-2" />
               NZ Curriculum Aligned
             </Badge>
@@ -622,7 +749,7 @@ export default function Landing() {
               Comprehensive practice covering all key topics for Years 1-8
             </p>
           </motion.div>
-          
+
           <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
             <motion.div
               initial={{ opacity: 0, x: -30 }}
@@ -641,9 +768,12 @@ export default function Landing() {
                   >
                     <Calculator className="w-16 h-16 text-primary" />
                   </motion.div>
-                  <h3 className="text-4xl font-bold mb-4 text-primary">Mathematics</h3>
+                  <h3 className="text-4xl font-bold mb-4 text-primary">
+                    Mathematics
+                  </h3>
                   <p className="text-muted-foreground mb-6 text-lg leading-relaxed">
-                    Master all key maths topics with AI-powered practice and instant feedback
+                    Master all key maths topics with AI-powered practice and
+                    instant feedback
                   </p>
                   <div className="space-y-3 mb-6">
                     {[
@@ -651,9 +781,12 @@ export default function Landing() {
                       "Multiplication & Division",
                       "Fractions & Decimals",
                       "Geometry & Measurement",
-                      "Problem Solving"
+                      "Problem Solving",
                     ].map((topic, i) => (
-                      <div key={i} className="flex items-center gap-2 justify-center">
+                      <div
+                        key={i}
+                        className="flex items-center gap-2 justify-center"
+                      >
                         <CheckCircle className="w-5 h-5 text-primary" />
                         <span className="text-sm font-medium">{topic}</span>
                       </div>
@@ -661,7 +794,9 @@ export default function Landing() {
                   </div>
                   <div className="inline-flex items-center gap-2 bg-primary/20 px-5 py-3 rounded-full border-2 border-primary/30">
                     <Target className="w-5 h-5 text-primary" />
-                    <span className="text-sm font-bold text-primary">Years 1-8 Aligned</span>
+                    <span className="text-sm font-bold text-primary">
+                      Years 1-8 Aligned
+                    </span>
                   </div>
                 </CardContent>
               </Card>
@@ -684,9 +819,12 @@ export default function Landing() {
                   >
                     <BookText className="w-16 h-16 text-accent" />
                   </motion.div>
-                  <h3 className="text-4xl font-bold mb-4 text-accent">English</h3>
+                  <h3 className="text-4xl font-bold mb-4 text-accent">
+                    English
+                  </h3>
                   <p className="text-muted-foreground mb-6 text-lg leading-relaxed">
-                    Build strong literacy skills through engaging reading and writing practice
+                    Build strong literacy skills through engaging reading and
+                    writing practice
                   </p>
                   <div className="space-y-3 mb-6">
                     {[
@@ -694,9 +832,12 @@ export default function Landing() {
                       "Vocabulary Building",
                       "Grammar & Punctuation",
                       "Spelling Mastery",
-                      "Creative Writing"
+                      "Creative Writing",
                     ].map((topic, i) => (
-                      <div key={i} className="flex items-center gap-2 justify-center">
+                      <div
+                        key={i}
+                        className="flex items-center gap-2 justify-center"
+                      >
                         <CheckCircle className="w-5 h-5 text-accent" />
                         <span className="text-sm font-medium">{topic}</span>
                       </div>
@@ -704,7 +845,9 @@ export default function Landing() {
                   </div>
                   <div className="inline-flex items-center gap-2 bg-accent/20 px-5 py-3 rounded-full border-2 border-accent/30">
                     <Target className="w-5 h-5 text-accent" />
-                    <span className="text-sm font-bold text-accent">Years 1-8 Aligned</span>
+                    <span className="text-sm font-bold text-accent">
+                      Years 1-8 Aligned
+                    </span>
                   </div>
                 </CardContent>
               </Card>
@@ -722,7 +865,10 @@ export default function Landing() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <Badge className="mb-4 px-6 py-2 text-sm" data-testid="badge-parents-teachers">
+            <Badge
+              className="mb-4 px-6 py-2 text-sm"
+              data-testid="badge-parents-teachers"
+            >
               <Users className="w-4 h-4 mr-2" />
               For Parents & Teachers
             </Badge>
@@ -730,7 +876,8 @@ export default function Landing() {
               Monitor Progress & Support Learning
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Powerful tools to track student progress, identify strengths, and support growth
+              Powerful tools to track student progress, identify strengths, and
+              support growth
             </p>
           </motion.div>
 
@@ -747,8 +894,14 @@ export default function Landing() {
                   <div className="w-20 h-20 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center border-2 border-primary/30">
                     <BarChart className="w-10 h-10 text-primary" />
                   </div>
-                  <h3 className="text-xl font-bold mb-3 text-primary">Detailed Analytics</h3>
-                  <p className="text-muted-foreground leading-relaxed">Track progress across subjects, view accuracy trends, monitor streaks, and see adaptive difficulty adjustments in real-time.</p>
+                  <h3 className="text-xl font-bold mb-3 text-primary">
+                    Detailed Analytics
+                  </h3>
+                  <p className="text-muted-foreground leading-relaxed">
+                    Track progress across subjects, view accuracy trends,
+                    monitor streaks, and see adaptive difficulty adjustments in
+                    real-time.
+                  </p>
                 </CardContent>
               </Card>
             </motion.div>
@@ -765,8 +918,13 @@ export default function Landing() {
                   <div className="w-20 h-20 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-accent/20 to-accent/10 flex items-center justify-center border-2 border-accent/30">
                     <Users className="w-10 h-10 text-accent" />
                   </div>
-                  <h3 className="text-xl font-bold mb-3 text-accent">Multi-Student Dashboard</h3>
-                  <p className="text-muted-foreground leading-relaxed">Link multiple students to your account and monitor all their progress from one convenient parent/teacher dashboard.</p>
+                  <h3 className="text-xl font-bold mb-3 text-accent">
+                    Multi-Student Dashboard
+                  </h3>
+                  <p className="text-muted-foreground leading-relaxed">
+                    Link multiple students to your account and monitor all their
+                    progress from one convenient parent/teacher dashboard.
+                  </p>
                 </CardContent>
               </Card>
             </motion.div>
@@ -783,8 +941,13 @@ export default function Landing() {
                   <div className="w-20 h-20 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-chart-3/20 to-chart-3/10 flex items-center justify-center border-2 border-chart-3/30">
                     <Shield className="w-10 h-10 text-chart-3" />
                   </div>
-                  <h3 className="text-xl font-bold mb-3 text-chart-3">Safe & Secure</h3>
-                  <p className="text-muted-foreground leading-relaxed">Student data is protected with enterprise-grade security. Approval-based linking system ensures privacy and safety.</p>
+                  <h3 className="text-xl font-bold mb-3 text-chart-3">
+                    Safe & Secure
+                  </h3>
+                  <p className="text-muted-foreground leading-relaxed">
+                    Student data is protected with enterprise-grade security.
+                    Approval-based linking system ensures privacy and safety.
+                  </p>
                 </CardContent>
               </Card>
             </motion.div>
@@ -799,8 +962,9 @@ export default function Landing() {
             <Smile className="w-16 h-16 text-primary mx-auto mb-4" />
             <h3 className="text-3xl font-bold mb-4">100% Free for Everyone</h3>
             <p className="text-lg text-muted-foreground mb-6 max-w-2xl mx-auto">
-              No subscriptions, no hidden fees, no credit card required. We believe every Kiwi kid 
-              deserves access to quality educational tools!
+              No subscriptions, no hidden fees, no credit card required. We
+              believe every Kiwi kid deserves access to quality educational
+              tools!
             </p>
             <div className="flex flex-wrap gap-4 justify-center">
               <Badge variant="secondary" className="px-4 py-2 text-sm">
@@ -841,7 +1005,8 @@ export default function Landing() {
             Ready to Start Your Learning Adventure?
           </h2>
           <p className="text-xl sm:text-2xl text-muted-foreground mb-10 max-w-2xl mx-auto leading-relaxed">
-            Join thousands of Kiwi kids mastering maths and English while having fun every day!
+            Join thousands of Kiwi kids mastering maths and English while having
+            fun every day!
           </p>
           <motion.div
             whileHover={{ scale: 1.1 }}
@@ -851,7 +1016,7 @@ export default function Landing() {
             <Button
               size="lg"
               className="text-xl shadow-2xl bg-gradient-to-r from-primary to-accent text-white"
-              onClick={() => window.location.href = "/api/login"}
+              onClick={() => (window.location.href = "/api/login")}
               data-testid="button-get-started"
             >
               <Rocket className="w-7 h-7 mr-3" />
