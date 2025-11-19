@@ -131,19 +131,25 @@ Preferred communication style: Simple, everyday language.
 ### Authentication & Authorization
 
 **Authentication Provider**
-- Replit Auth via OpenID Connect (OIDC) protocol
-- Passport.js strategy for session management
-- Automatic token refresh handling
+- Auth0 for secure authentication and user management
+- Passport.js with passport-auth0 strategy for session management
+- OAuth 2.0 / OpenID Connect protocol
 
 **Session Management**
 - PostgreSQL-backed sessions via connect-pg-simple
 - 7-day session duration with secure HTTP-only cookies
-- Session state synchronized with user claims and access tokens
+- Session state synchronized with Auth0 user profile
 
 **Authorization Pattern**
 - `isAuthenticated` middleware protects all API routes requiring user context
-- User ID extracted from session claims for data scoping
+- User ID extracted from Auth0 profile (`req.user.id`) for data scoping
 - Automatic redirect to login on 401 responses
+
+**Auth0 Configuration**
+- Login endpoint: `/api/login`
+- Callback endpoint: `/api/callback`
+- Logout endpoint: `/api/logout` (redirects to Auth0 logout with return URL)
+- Scopes requested: `openid email profile`
 
 ### AI Integration
 
@@ -168,7 +174,6 @@ Preferred communication style: Simple, everyday language.
 - Responsive images and lazy loading
 
 **Backend**
-- OIDC configuration memoization (1-hour cache)
 - Database connection pooling via Neon
 - Efficient query patterns with Drizzle ORM
 - Request logging for monitoring and debugging
@@ -177,7 +182,7 @@ Preferred communication style: Simple, everyday language.
 
 ### Third-Party Services
 - **OpenAI API**: GPT-5 model for AI-powered question generation and answer validation
-- **Replit Auth**: OpenID Connect authentication provider (issuer: replit.com/oidc)
+- **Auth0**: Secure authentication and user management service
 - **Neon Database**: Serverless PostgreSQL hosting via WebSocket connections
 
 ### Core Libraries
@@ -194,13 +199,13 @@ Preferred communication style: Simple, everyday language.
 - **Development**: tsx for TypeScript execution, nodemon-like hot reload
 
 ### Authentication & Session
-- **Authentication**: openid-client and passport for OIDC flow
+- **Authentication**: passport-auth0 for Auth0 integration
 - **Sessions**: express-session with connect-pg-simple for PostgreSQL storage
-- **Security**: Memoizee for secure configuration caching
 
 ### Environment Variables Required
 - `DATABASE_URL`: PostgreSQL connection string
 - `OPENAI_API_KEY`: OpenAI API authentication
 - `SESSION_SECRET`: Encryption key for session cookies
-- `ISSUER_URL`: OIDC provider URL (defaults to Replit)
-- `REPL_ID`: Replit application identifier
+- `AUTH0_DOMAIN`: Auth0 tenant domain
+- `AUTH0_CLIENT_ID`: Auth0 application client ID
+- `AUTH0_CLIENT_SECRET`: Auth0 application client secret
