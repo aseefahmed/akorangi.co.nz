@@ -151,6 +151,20 @@ Preferred communication style: Simple, everyday language.
 - Logout endpoint: `/api/logout` (redirects to Auth0 logout with return URL)
 - Scopes requested: `openid email profile`
 
+**Security Features**
+- Host header validation with allowlist (prevents unauthorized domains)
+- Protocol sanitization (only http/https allowed, prevents header spoofing)
+- OAuth state parameter for CSRF protection (enabled by default)
+- Maximum 2 authentication strategies per allowed host (HTTP + HTTPS)
+- DoS protection via host and protocol validation
+- Secure session cookies in production, non-secure in development
+
+**Environment Configuration**
+- **Production**: Secure cookies (HTTPS-only), strict sameSite policy
+- **Development**: Non-secure cookies (supports HTTP localhost), lax sameSite policy
+- **Allowed Hosts**: Automatically includes Replit domains and localhost in development
+- **Custom Domains**: Add via `ALLOWED_HOSTS` environment variable (comma-separated)
+
 ### AI Integration
 
 **OpenAI GPT-5 Integration**
