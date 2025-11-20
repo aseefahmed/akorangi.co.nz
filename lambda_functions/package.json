@@ -1,0 +1,25 @@
+{
+  "name": "akorangi-lambda-functions",
+  "version": "1.0.0",
+  "description": "AWS Lambda functions for AkoRangi education platform",
+  "scripts": {
+    "deploy": "serverless deploy",
+    "deploy:function": "serverless deploy function -f",
+    "logs": "serverless logs -f",
+    "info": "serverless info",
+    "remove": "serverless remove",
+    "local": "serverless offline"
+  },
+  "devDependencies": {
+    "serverless": "^3.38.0",
+    "serverless-offline": "^13.3.3",
+    "serverless-python-requirements": "^6.1.0"
+  },
+  "keywords": [
+    "lambda",
+    "serverless",
+    "education",
+    "aws"
+  ],
+  "author": "AkoRangi Team"
+}

@@ -96,6 +96,13 @@ Preferred communication style: Simple, everyday language.
 - TypeScript for type safety across the entire stack
 - Session-based authentication using Auth0 (OpenID Connect)
 
+**Lambda Functions Export**
+- Complete Python-based AWS Lambda implementation available in `lambda_functions/` directory
+- All major API endpoints exported as independent serverless functions
+- Uses JWT token authentication instead of Express sessions
+- Deployment ready with Serverless Framework configuration
+- See `lambda_functions/README.md` for deployment instructions
+
 **API Design**
 - RESTful endpoints organized by domain (auth, practice sessions, achievements)
 - Centralized route registration in `server/routes.ts`
