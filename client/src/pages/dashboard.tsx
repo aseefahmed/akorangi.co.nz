@@ -27,22 +27,9 @@ import { PetSelector } from "@/components/pet-selector";
 import { PetCard } from "@/components/pet-card";
 
 export default function Dashboard() {
-  const { user, isLoading, isAuthenticated } = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const { toast } = useToast();
   const [petSelectorOpen, setPetSelectorOpen] = useState(false);
-
-  useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      toast({
-        title: "Unauthorized",
-        description: "You are logged out. Logging in again...",
-        variant: "destructive",
-      });
-      setTimeout(() => {
-        window.location.href = "/api/login";
-      }, 500);
-    }
-  }, [isAuthenticated, isLoading, toast]);
 
   const { data: recentSessions = [], isLoading: sessionsLoading } = useQuery<
     PracticeSession[]
@@ -72,17 +59,6 @@ export default function Dashboard() {
       return () => clearTimeout(timer);
     }
   }, [isAuthenticated, petLoading, pet, user?.role]);
-
-  if (isLoading || !isAuthenticated) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-primary border-r-transparent mb-4" />
-          <p className="text-muted-foreground">Loading your dashboard...</p>
-        </div>
-      </div>
-    );
-  }
 
   // Calculate real progress based on sessions
   const mathsSessions = recentSessions.filter(s => s.subject === "maths" && s.completedAt);

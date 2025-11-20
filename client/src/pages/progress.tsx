@@ -31,21 +31,8 @@ import {
 } from "recharts";
 
 export default function ProgressPage() {
-  const { user, isLoading, isAuthenticated } = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const { toast } = useToast();
-
-  useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      toast({
-        title: "Unauthorized",
-        description: "You are logged out. Logging in again...",
-        variant: "destructive",
-      });
-      setTimeout(() => {
-        window.location.href = "/api/login";
-      }, 500);
-    }
-  }, [isAuthenticated, isLoading, toast]);
 
   const { data: allSessions = [], isLoading: sessionsLoading } = useQuery<
     PracticeSession[]
@@ -60,17 +47,6 @@ export default function ProgressPage() {
     queryKey: ["/api/achievements/user"],
     enabled: isAuthenticated,
   });
-
-  if (isLoading || !isAuthenticated) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-primary border-r-transparent mb-4" />
-          <p className="text-muted-foreground">Loading progress report...</p>
-        </div>
-      </div>
-    );
-  }
 
   const totalSessions = allSessions.length;
   const totalQuestionsAttempted = allSessions.reduce(
@@ -121,8 +97,8 @@ export default function ProgressPage() {
       day: `Day ${index + 1}`,
       points: session.pointsEarned || 0,
       accuracy:
-        session.questionsAttempted > 0
-          ? Math.round((session.questionsCorrect / session.questionsAttempted) * 100)
+        (session.questionsAttempted || 0) > 0
+          ? Math.round(((session.questionsCorrect || 0) / (session.questionsAttempted || 0)) * 100)
           : 0,
     }));
 
@@ -342,12 +318,12 @@ export default function ProgressPage() {
                         </div>
                         <div className="flex items-center gap-4 text-sm text-muted-foreground">
                           <span>
-                            {session.questionsCorrect}/{session.questionsAttempted} correct
+                            {session.questionsCorrect || 0}/{session.questionsAttempted || 0} correct
                           </span>
                           <span>
-                            {session.questionsAttempted > 0
+                            {(session.questionsAttempted || 0) > 0
                               ? Math.round(
-                                  (session.questionsCorrect / session.questionsAttempted) * 100
+                                  ((session.questionsCorrect || 0) / (session.questionsAttempted || 0)) * 100
                                 )
                               : 0}
                             % accuracy

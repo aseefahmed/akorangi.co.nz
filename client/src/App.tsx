@@ -5,7 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Header } from "@/components/header";
-import { useAuth } from "@/hooks/useAuth";
+import { ProtectedRoute } from "@/components/protected-route";
 import NotFound from "@/pages/not-found";
 import Landing from "@/pages/landing";
 import Dashboard from "@/pages/dashboard";
@@ -16,43 +16,46 @@ import Stories from "@/pages/stories";
 import StoryDetail from "@/pages/story-detail";
 
 function Router() {
-  const { isAuthenticated, isLoading } = useAuth();
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-primary border-r-transparent mb-4" />
-          <p className="text-muted-foreground">Loading...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!isAuthenticated) {
-    return (
-      <>
-        <Header />
-        <Switch>
-          <Route path="/" component={Landing} />
-          <Route component={Landing} />
-        </Switch>
-      </>
-    );
-  }
-
   return (
     <>
       <Header />
       <Switch>
-        <Route path="/" component={Dashboard} />
-        <Route path="/dashboard" component={Dashboard} />
-        <Route path="/practice" component={Practice} />
-        <Route path="/practice/:subject" component={Practice} />
-        <Route path="/progress" component={ProgressPage} />
-        <Route path="/parent-dashboard" component={ParentDashboard} />
-        <Route path="/stories" component={Stories} />
-        <Route path="/stories/:id" component={StoryDetail} />
+        <Route path="/" component={Landing} />
+        <Route path="/dashboard">
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        </Route>
+        <Route path="/practice">
+          <ProtectedRoute>
+            <Practice />
+          </ProtectedRoute>
+        </Route>
+        <Route path="/practice/:subject">
+          <ProtectedRoute>
+            <Practice />
+          </ProtectedRoute>
+        </Route>
+        <Route path="/progress">
+          <ProtectedRoute>
+            <ProgressPage />
+          </ProtectedRoute>
+        </Route>
+        <Route path="/parent-dashboard">
+          <ProtectedRoute>
+            <ParentDashboard />
+          </ProtectedRoute>
+        </Route>
+        <Route path="/stories">
+          <ProtectedRoute>
+            <Stories />
+          </ProtectedRoute>
+        </Route>
+        <Route path="/stories/:id">
+          <ProtectedRoute>
+            <StoryDetail />
+          </ProtectedRoute>
+        </Route>
         <Route component={NotFound} />
       </Switch>
     </>

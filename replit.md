@@ -75,7 +75,13 @@ Preferred communication style: Simple, everyday language.
 - React Query handles all server state (user data, practice sessions, achievements)
 - Local component state using React hooks
 - Theme state managed via Context API with localStorage persistence
-- Session state managed server-side via express-session
+- Session state managed server-side via express-session (no client-side auth storage)
+
+**Authentication Flow**
+- `ProtectedRoute` component wraps all authenticated pages
+- Automatic redirect to `/api/login` when accessing protected pages while unauthenticated
+- Global 401 error handling in query client redirects to login
+- No client-side storage of authentication tokens or session data
 
 **API Request Pattern**
 - `apiRequest` function in `client/src/lib/queryClient.ts` handles all POST/PATCH/DELETE requests
