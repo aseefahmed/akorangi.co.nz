@@ -1,5 +1,0 @@
-# Python dependencies for Lambda functions
-psycopg2-binary==2.9.9
-python-jose[cryptography]==3.3.0
-openai==1.54.0
-six==1.16.0
